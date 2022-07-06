@@ -1,9 +1,10 @@
 import type { NextPage } from "next";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import Button from "../components/button";
-import Input from "../components/input";
-import { cls } from "../libs/client/utils";
+import Button from "@components/button";
+import Input from "@components/input";
+import useMutation from "@libs/client/useMutation";
+import { cls } from "@libs/client/utils";
 
 interface EnterForm {
   email?: string;
@@ -11,12 +12,9 @@ interface EnterForm {
 }
 
 const Enter: NextPage = () => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { isSubmitting },
-  } = useForm<EnterForm>();
+  const { register, handleSubmit, reset } = useForm<EnterForm>();
+
+  const [enter, { loading, data, error }] = useMutation("/api/users/enter");
 
   const [method, setMethod] = useState<"email" | "phone">("email");
 
@@ -30,14 +28,9 @@ const Enter: NextPage = () => {
     setMethod("phone");
   };
 
-  const onValid = (data: EnterForm) => {
-    fetch("/api/users/enter", {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+  const onValid = (validForm: EnterForm) => {
+    if (loading) return;
+    enter(validForm);
   };
 
   return (
@@ -98,7 +91,7 @@ const Enter: NextPage = () => {
           )}
           {method === "email" && <Button text={"Get login link"} />}
           {method === "phone" && (
-            <Button text={isSubmitting ? "Loading" : "Get one-time password"} />
+            <Button text={loading ? "Loading" : "Get one-time password"} />
           )}
         </form>
 

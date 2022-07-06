@@ -1,14 +1,17 @@
-import { NextApiRequest,NextApiResponse } from "next";
-import client from "../../lib/client";
+import { NextApiRequest, NextApiResponse } from "next";
+import client from "@libs/server/client";
 
-export default async function handler(req:NextApiRequest,res:NextApiResponse){
-    await client.user.create({
-        data:{
-            email:'hi',
-            name:'hello'
-        }
-    });
-    res.json({
-        created:true
-    })
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  await client.user.create({
+    data: {
+      email: "hi",
+      name: "hello",
+    },
+  });
+  res.json({
+    created: true,
+  });
 }

@@ -17,7 +17,7 @@ export default function useMutation(url: string): UseMutationResult {
 
   const mutation = async (data: any) => {
     setState((prev) => ({ ...prev, loading: true }));
-    fetch("/api/users/enter", {
+    fetch(url, {
       method: "POST",
       body: JSON.stringify(data),
       headers: {

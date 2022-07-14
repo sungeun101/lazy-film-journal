@@ -31,33 +31,31 @@ async function handler(
     },
   });
 
-  //   if (phone) {
-  //     const message = await twilioClient.messages.create({
-  //       messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICES_SID,
-  //       to: process.env.MY_PHONE!,
-  //       body: `Your login token is ${payload}`,
-  //     });
-  //     console.log(message);
-  //   }
-  // else
-  if (email) {
-    const mailOptions = {
-      from: process.env.MAIL_ID,
-      to: email,
-      subject: "Next Market Authentication Email",
-      html: `<div>Authentication Code : <strong>${payload}</strong></div>`,
-    };
-    const result = smtpTransport.sendMail(mailOptions, (error, responses) => {
-      if (error) {
-        console.log(error);
-        return null;
-      } else {
-        console.log(responses);
-        return null;
-      }
-    });
-    smtpTransport.close();
-    console.log(result);
+  if (phone) {
+    //     const message = await twilioClient.messages.create({
+    //       messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICES_SID,
+    //       to: process.env.MY_PHONE!,
+    //       body: `Your login token is ${payload}`,
+    //     });
+    //     console.log(message);
+  } else if (email) {
+    // const mailOptions = {
+    //   from: process.env.MAIL_ID,
+    //   to: email,
+    //   subject: "Next Market Authentication Email",
+    //   html: `<div>Authentication Code : <strong>${payload}</strong></div>`,
+    // };
+    // const result = smtpTransport.sendMail(mailOptions, (error, responses) => {
+    //   if (error) {
+    //     console.log(error);
+    //     return null;
+    //   } else {
+    //     console.log(responses);
+    //     return null;
+    //   }
+    // });
+    // smtpTransport.close();
+    // console.log(result);
   }
 
   return res.json({

@@ -8,7 +8,7 @@ export interface ResponseType {
 
 export default function withHandler(
   method: "GET" | "POST" | "DELETE",
-  fn: (req: NextApiRequest, res: NextApiResponse) => void
+  fn: (req: NextApiRequest, res: NextApiResponse) => Promise<any>
 ) {
   return function (req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== method) {

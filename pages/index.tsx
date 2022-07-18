@@ -1,6 +1,9 @@
+import useUser from "@libs/client/useUser";
 import type { NextPage } from "next";
 
 const Home: NextPage = () => {
+  const { user, isLoading } = useUser();
+  console.log(user, isLoading);
   return (
     <div className="flex flex-col space-y-5 py-10">
       {[...Array(10)].map((_, i) => (

@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 
-const CreateStream: NextPage = () => {
+const CreateLive: NextPage = () => {
   return (
     <div className="px-4 py-16 space-y-5">
       <div>
@@ -64,4 +64,4 @@ const CreateStream: NextPage = () => {
   );
 };
 
-export default CreateStream;
+export default CreateLive;

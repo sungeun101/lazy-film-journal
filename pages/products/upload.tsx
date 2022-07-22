@@ -21,7 +21,7 @@ interface MutationResult {
 }
 
 const Upload: NextPage = () => {
-  const { register, handleSubmit, watch } = useForm<UploadProductForm>();
+  const { register, handleSubmit } = useForm<UploadProductForm>();
 
   const [uploadProduct, { loading, data }] =
     useMutation<MutationResult>("/api/products");
@@ -30,7 +30,7 @@ const Upload: NextPage = () => {
 
   useEffect(() => {
     if (data?.ok) {
-      router.push(`/products/${data.product.id}`);
+      router.replace(`/products/${data.product.id}`);
     }
   }, [data, router]);
 

@@ -2,12 +2,18 @@ import Button from "@components/button";
 import Layout from "@components/layout";
 import TextArea from "@components/textarea";
 import type { NextPage } from "next";
+import { useForm } from "react-hook-form";
 
 const Write: NextPage = () => {
+  const { register } = useForm();
   return (
     <Layout canGoBack title="Write Post">
       <form className="p-4 space-y-4">
-        <TextArea required placeholder="Ask a question!" />
+        <TextArea
+          required
+          placeholder="Ask a question!"
+          register={register("description", { required: true })}
+        />
         <Button text="Submit" />
       </form>
     </Layout>

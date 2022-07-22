@@ -1,12 +1,29 @@
 import Button from "@components/button";
+import Input from "@components/input";
 import Layout from "@components/layout";
 import TextArea from "@components/textarea";
+import useMutation from "@libs/client/useMutation";
 import type { NextPage } from "next";
+import { useForm } from "react-hook-form";
+
+interface UploadProductForm {
+  name: string;
+  price: number;
+  description: string;
+}
 
 const Upload: NextPage = () => {
+  const { register, handleSubmit, watch } = useForm<UploadProductForm>();
+
+  const [uploadProduct, { loading }] = useMutation("/api/products");
+
+  const onValid = (data: UploadProductForm) => {
+    if (loading) return;
+    uploadProduct(data);
+  };
   return (
     <Layout canGoBack title="Upload Product">
-      <form className="p-4 space-y-4">
+      <form className="p-4 space-y-4" onSubmit={handleSubmit(onValid)}>
         <div>
           <label className="w-full flex items-center justify-center h-48 border-2 border-dashed border-gray-300 hover:border-orange-500 rounded-md text-gray-600 hover:text-orange-500 cursor-pointer">
             <svg
@@ -26,50 +43,28 @@ const Upload: NextPage = () => {
             <input type="file" className="hidden" />
           </label>
         </div>
-
-        <div>
-          <label
-            className="mb-1 block text-sm font-medium text-gray-700"
-            htmlFor="name"
-          >
-            Name
-          </label>
-          <div className="rounded-md relative flex  items-center shadow-sm">
-            <input
-              id="name"
-              type="email"
-              className="appearance-none w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500"
-              required
-            />
-          </div>
-        </div>
-
-        <div>
-          <label
-            htmlFor="price"
-            className="block mb-1 text-sm font-medium text-gray-700"
-          >
-            Price
-          </label>
-          <div className="rounded-md shadow-sm relative flex items-center">
-            <span className="absolute left-0 pl-3 text-gray-500 text-sm pointer-events-none">
-              $
-            </span>
-            <input
-              id="price"
-              type="text"
-              placeholder="0.00"
-              className="appearance-none w-full border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 pl-7"
-            />
-            <span className="absolute right-0 pr-3 text-gray-500 text-sm pointer-events-none">
-              USD
-            </span>
-          </div>
-        </div>
-
-        <TextArea name="description" label="Description" />
-
-        <Button text="Upload item" />
+        <Input
+          register={register("name", { required: true })}
+          required
+          label="Name"
+          name="name"
+          type="text"
+        />
+        <Input
+          register={register("price", { required: true })}
+          required
+          label="Price"
+          name="price"
+          type="text"
+          kind="price"
+        />
+        <TextArea
+          register={register("description", { required: true })}
+          label="Description"
+          name="description"
+          required
+        />
+        <Button text={loading ? "Loading..." : "Upload item"} />
       </form>
     </Layout>
   );

@@ -2,8 +2,10 @@ import Button from "@components/button";
 import Layout from "@components/layout";
 import TextArea from "@components/textarea";
 import type { NextPage } from "next";
+import { useForm } from "react-hook-form";
 
 const CreateLive: NextPage = () => {
+  const { register } = useForm();
   return (
     <Layout canGoBack title="Go Live">
       <form className="px-4 py-16 space-y-5">
@@ -46,9 +48,13 @@ const CreateLive: NextPage = () => {
             </span>
           </div>
         </div>
-        <TextArea name="description" label="Description" />
+        <TextArea
+          name="description"
+          label="Description"
+          register={register("description", { required: true })}
+        />
         <Button text="Go live" />
-      </form>{" "}
+      </form>
     </Layout>
   );
 };

@@ -68,4 +68,3 @@ export default withHandler({
   handler,
   isPrivate: false,
 });
-``;

@@ -16,7 +16,7 @@ const CreateLive: NextPage = () => {
           >
             Name
           </label>
-          <div className="rounded-md relative flex  items-center shadow-sm">
+          <div className="rounded-md relative flex items-center shadow-sm">
             <input
               id="name"
               type="email"

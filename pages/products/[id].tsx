@@ -33,17 +33,12 @@ const ProductDetail: NextPage = () => {
     // optimistic UI update for users
     boundMutate((prev) => prev && { ...prev, isLiked: !prev.isLiked }, false);
     // Unbound Mutation
-    mutate(
-      "/api/profile/wish",
-      (prev: ProductDetailResponse) =>
-        prev && { ...prev, isLiked: !prev.isLiked },
-      false
-    );
-    mutate(
-      "/api/products",
-      (prev: any) => prev && { ...prev, isLiked: !prev.isLiked },
-      false
-    );
+    // mutate(
+    //   "/api/profile/wish",
+    //   (prev: ProductDetailResponse) =>
+    //     prev && { ...prev, isLiked: !prev.isLiked },
+    //   false
+    // );
     // real update
     toggleFav({});
   };

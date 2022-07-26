@@ -1,5 +1,7 @@
 import Button from "@components/button";
 import Layout from "@components/layout";
+import useMutation from "@libs/client/useMutation";
+import { cls } from "@libs/client/utils";
 import { Product, User } from "@prisma/client";
 import type { NextPage } from "next";
 import Link from "next/link";
@@ -13,6 +15,7 @@ interface ProductDetailResponse {
   ok: boolean;
   product: ProductWithUser;
   relatedProducts: Product[];
+  isLiked: boolean;
 }
 
 const ProductDetail: NextPage = () => {
@@ -20,6 +23,10 @@ const ProductDetail: NextPage = () => {
   const { data } = useSWR<ProductDetailResponse>(
     router.query ? `/api/products/${router.query.id}` : null
   );
+  const [toggleFav] = useMutation(`/api/products/${router.query.id}/fav`);
+  const onFavClick = () => {
+    toggleFav({});
+  };
   return (
     <Layout canGoBack>
       <div className="px-4 py-10">
@@ -49,11 +56,19 @@ const ProductDetail: NextPage = () => {
               <p className=" my-6 text-gray-700">{data.product.description}</p>
               <div className="flex items-center justify-between space-x-2">
                 <Button large text="Talk to seller" />
-                <button className="p-3 rounded-md flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-500">
+                <button
+                  className={cls(
+                    "p-3 rounded-md flex items-center justify-center hover:bg-gray-100 ",
+                    data?.isLiked
+                      ? "text-red-400 hover:text-red-500"
+                      : "text-gray-400 hover:text-gray-500"
+                  )}
+                  onClick={onFavClick}
+                >
                   <svg
                     className="h-6 w-6 "
                     xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
+                    fill={data?.isLiked ? "currentColor" : "none"}
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                     aria-hidden="true"

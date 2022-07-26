@@ -6,7 +6,7 @@ import { Product, User } from "@prisma/client";
 import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 
 interface ProductWithUser extends Product {
   user: User;
@@ -21,7 +21,8 @@ interface ProductDetailResponse {
 const ProductDetail: NextPage = () => {
   const router = useRouter();
 
-  const { data, mutate } = useSWR<ProductDetailResponse>(
+  const { mutate } = useSWRConfig();
+  const { data, mutate: boundMutate } = useSWR<ProductDetailResponse>(
     router.query ? `/api/products/${router.query.id}` : null
   );
 
@@ -29,7 +30,13 @@ const ProductDetail: NextPage = () => {
 
   const onFavClick = () => {
     if (!data) return;
-    mutate({ ...data, isLiked: !data.isLiked }, false); // optimistic UI update for users
+    boundMutate((prev) => prev && { ...prev, isLiked: !prev.isLiked }, false); // optimistic UI update for users
+    // mutate(
+    //   "/api/profile/wish",
+    //   (prev: ProductDetailResponse) =>
+    //     prev && { ...prev, isLiked: !prev.isLiked },
+    //   false
+    // ); // Unbound Mutation
     toggleFav({}); // real update
   };
   return (

@@ -22,7 +22,7 @@ model User {
   updatedAt DateTime  @updatedAt
   tokens    Token[]
   products  Product[]
-  fav       Fav[]
+  favs       Fav[]
 }
 
 model Token {
@@ -44,7 +44,7 @@ model Product {
   name        String
   price       Int
   description String   @db.MediumText
-  fav         Fav[]
+  favs         Fav[]
 }
 
 model Fav {

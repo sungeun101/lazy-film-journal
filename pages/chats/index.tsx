@@ -19,7 +19,7 @@ const Chats: NextPage = () => {
             </a>
           </Link>
         ))}
-      </div>{" "}
+      </div>
     </Layout>
   );
 };

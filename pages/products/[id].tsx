@@ -26,7 +26,9 @@ const ProductDetail: NextPage = () => {
     router.query ? `/api/products/${router.query.id}` : null
   );
 
-  const [toggleFav] = useMutation(`/api/products/${router.query.id}/fav`);
+  const [toggleFav, { loading }] = useMutation(
+    `/api/products/${router.query.id}/fav`
+  );
 
   const onFavClick = () => {
     if (!data) return;
@@ -40,8 +42,11 @@ const ProductDetail: NextPage = () => {
     //   false
     // );
     // real update
-    toggleFav({});
+    if (!loading) {
+      toggleFav({});
+    }
   };
+
   return (
     <Layout canGoBack>
       <div className="px-4 py-10">

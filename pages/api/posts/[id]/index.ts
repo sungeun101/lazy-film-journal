@@ -7,7 +7,10 @@ async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>
 ) {
-  const { id } = req.query;
+  const {
+    query: { id },
+    session: { user },
+  } = req;
   const post = await client.post.findUnique({
     where: { id: Number(id) },
     include: {
@@ -36,10 +39,25 @@ async function handler(
       },
     },
   });
+
   if (!post) res.status(404).json({ ok: false, error: "Post Not Found" });
+
+  const isRecommended = Boolean(
+    await client.recommended.findFirst({
+      where: {
+        postId: Number(id),
+        userId: user?.id,
+      },
+      select: {
+        id: true,
+      },
+    })
+  );
+
   res.json({
     ok: true,
     post,
+    isRecommended,
   });
 }
 

@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { Answer, Post, User } from "@prisma/client";
 import Link from "next/link";
+import useMutation from "@libs/client/useMutation";
 
 interface AnswersWithUser extends Answer {
   user: User;
@@ -20,6 +21,7 @@ interface PostDetailWithUserAndCount extends Post {
 interface PostDetailResponse {
   ok: boolean;
   post: PostDetailWithUserAndCount;
+  isRecommended: boolean;
 }
 
 const CommunityPostDetail: NextPage = () => {
@@ -27,14 +29,42 @@ const CommunityPostDetail: NextPage = () => {
 
   const router = useRouter();
 
-  const { data } = useSWR<PostDetailResponse>(`/api/posts/${router.query.id}`);
+  const { data, mutate } = useSWR<PostDetailResponse>(
+    `/api/posts/${router.query.id}`
+  );
+
+  const [toggleRecommend] = useMutation(
+    `/api/posts/${router.query.id}/recommend`
+  );
 
   useEffect(() => {
     if (data && !data.ok) {
       router.push("/community");
     }
   }, [data, router]);
-  console.log(data);
+
+  const onRecommendClick = () => {
+    if (!data) return;
+    mutate(
+      (prev) =>
+        prev && {
+          ...prev,
+          post: {
+            ...prev.post,
+            _count: {
+              ...prev.post._count,
+              recommended: prev.isRecommended
+                ? prev.post._count.recommended - 1
+                : prev.post._count.recommended + 1,
+            },
+          },
+          isRecommended: !prev.isRecommended,
+        },
+      false
+    );
+    toggleRecommend({});
+  };
+
   return (
     <Layout canGoBack>
       <div>
@@ -60,10 +90,13 @@ const CommunityPostDetail: NextPage = () => {
             {data?.post?.question}
           </div>
           <div className="flex px-4 space-x-5 mt-3 text-gray-700 py-2.5 border-t border-b-[2px]  w-full">
-            <span className="flex space-x-2 items-center text-sm">
+            <button
+              onClick={onRecommendClick}
+              className="flex space-x-2 items-center text-sm"
+            >
               <svg
                 className="w-4 h-4"
-                fill="none"
+                fill={data?.isRecommended ? "currentColor" : "none"}
                 stroke="currentColor"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
@@ -71,13 +104,13 @@ const CommunityPostDetail: NextPage = () => {
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                ></path>
+                  strokeWidth={2}
+                  d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
+                />
               </svg>
               <span>Recommended {data?.post?._count?.recommended}</span>
-            </span>
-            <span className="flex space-x-2 items-center text-sm">
+            </button>
+            <button className="flex space-x-2 items-center text-sm">
               <svg
                 className="w-4 h-4"
                 fill="none"
@@ -98,7 +131,7 @@ const CommunityPostDetail: NextPage = () => {
                   : "Answer"}{" "}
                 {data?.post?._count?.answers}
               </span>
-            </span>
+            </button>
           </div>
         </div>
 

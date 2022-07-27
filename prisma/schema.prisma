@@ -90,5 +90,4 @@ model Recommended {
   userId    Int
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int
-  answer    String  @db.MediumText
 }

@@ -56,11 +56,11 @@ const CommunityPostDetail: NextPage = () => {
   }, [data, router]);
 
   useEffect(() => {
-    if (answerData && !answerData.ok) {
+    if (answerData && answerData.ok) {
       reset();
-      console.log(answerData);
+      mutate();
     }
-  }, [answerData, reset]);
+  }, [answerData, mutate, reset]);
 
   const onRecommendClick = () => {
     if (!data) return;
@@ -87,9 +87,8 @@ const CommunityPostDetail: NextPage = () => {
   };
 
   const onValid = (form: AnswerForm) => {
-    if (!answerLoading) {
-      answer(form);
-    }
+    if (answerLoading) return;
+    answer(form);
   };
 
   return (

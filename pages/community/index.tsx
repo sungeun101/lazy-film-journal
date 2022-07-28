@@ -2,24 +2,39 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import FloatingButton from "@components/floating-button";
 import Layout from "@components/layout";
+import useSWR from "swr";
+import { Post, User } from "@prisma/client";
+
+interface PostWithUserAndCount extends Post {
+  user: User;
+  _count: {
+    recommended: number;
+    answers: number;
+  };
+}
+interface PostsResponse {
+  ok: boolean;
+  posts: PostWithUserAndCount[];
+}
 
 const Community: NextPage = () => {
+  const { data } = useSWR<PostsResponse>("/api/posts");
   return (
     <Layout hasTabBar title="Stories">
       <div className="space-y-4 divide-y-[2px]">
-        {[1, 2, 3, 4, 5, 6].map((_, i) => (
-          <Link key={i} href={`/community/${i}`}>
+        {data?.posts?.map((post) => (
+          <Link key={post.id} href={`/community/${post.id}`}>
             <a className="flex cursor-pointer flex-col pt-4 items-start">
               <span className="flex ml-4 items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                 Near You
               </span>
               <div className="mt-2 px-4 text-gray-700">
-                <span className="text-orange-500 font-medium">Q.</span> What is
-                CrossFit?
+                <span className="text-orange-500 font-medium pr-1">Q.</span>
+                {post.question}
               </div>
               <div className="mt-5 px-4 flex items-center justify-between w-full text-gray-500 font-medium text-xs">
-                <span>Sun</span>
-                <span>18 hours ago</span>
+                <span>{post.user.name}</span>
+                <span>{post.createdAt.toString()}</span>
               </div>
               <div className="flex px-4 space-x-5 mt-3 text-gray-700 py-2.5 border-t   w-full">
                 <span className="flex space-x-2 items-center text-sm">
@@ -37,7 +52,7 @@ const Community: NextPage = () => {
                       d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                     ></path>
                   </svg>
-                  <span>Like 1</span>
+                  <span>Recommended {post._count.recommended}</span>
                 </span>
                 <span className="flex space-x-2 items-center text-sm">
                   <svg
@@ -54,7 +69,11 @@ const Community: NextPage = () => {
                       d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                     ></path>
                   </svg>
-                  <span>Answer 1</span>
+                  <span>
+                    Answer
+                    {post._count.answers && post._count.answers > 1 && "s"}{" "}
+                    {post._count.answers}
+                  </span>
                 </span>
               </div>
             </a>

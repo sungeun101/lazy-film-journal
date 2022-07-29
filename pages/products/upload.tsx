@@ -72,7 +72,7 @@ const Upload: NextPage = () => {
           required
           label="Price"
           name="price"
-          type="text"
+          type="number"
           kind="price"
         />
         <TextArea

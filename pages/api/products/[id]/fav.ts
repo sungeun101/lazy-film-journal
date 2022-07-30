@@ -9,7 +9,6 @@ async function handler(
 ) {
   const {
     query: { id },
-    // id in the URL
     session: { user },
   } = req;
   const alreadyExists = await client.fav.findFirst({

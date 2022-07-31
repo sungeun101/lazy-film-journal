@@ -32,52 +32,35 @@ async function handler(
     const {
       query: { latitude, longitude },
     } = req;
-    let posts;
-    if (latitude && longitude) {
-      const parsedLatitude = parseFloat(latitude.toString());
-      const parsedLongitude = parseFloat(longitude.toString());
-      posts = await client.post.findMany({
-        include: {
-          user: {
-            select: {
-              name: true,
-            },
-          },
-          _count: {
-            select: {
-              recommended: true,
-              answers: true,
-            },
+    const parsedLatitude = parseFloat(latitude!.toString());
+    const parsedLongitude = parseFloat(longitude!.toString());
+    const posts = await client.post.findMany({
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
           },
         },
-        where: {
-          latitude: {
-            gte: parsedLatitude - 0.01,
-            lte: parsedLatitude + 0.01,
-          },
-          longitude: {
-            gte: parsedLongitude - 0.01,
-            lte: parsedLongitude + 0.01,
+        _count: {
+          select: {
+            recommended: true,
+            answers: true,
           },
         },
-      });
-    } else {
-      posts = await client.post.findMany({
-        include: {
-          user: {
-            select: {
-              name: true,
-            },
-          },
-          _count: {
-            select: {
-              recommended: true,
-              answers: true,
-            },
-          },
+      },
+      where: {
+        latitude: {
+          gte: parsedLatitude - 0.01,
+          lte: parsedLatitude + 0.01,
         },
-      });
-    }
+        longitude: {
+          gte: parsedLongitude - 0.01,
+          lte: parsedLongitude + 0.01,
+        },
+      },
+    });
     res.json({
       ok: true,
       posts,

@@ -30,7 +30,6 @@ async function handler(
       },
     },
   });
-
   if (phone) {
     //     const message = await twilioClient.messages.create({
     //       messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICES_SID,
@@ -57,7 +56,6 @@ async function handler(
     // smtpTransport.close();
     // console.log(result);
   }
-
   return res.json({
     ok: true,
   });

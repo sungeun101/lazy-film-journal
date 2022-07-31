@@ -34,7 +34,6 @@ const Write: NextPage = () => {
   }, [data, router]);
 
   const onValid = (data: FormData) => {
-    console.log("hi");
     if (loading) return;
     post({ ...data, latitude, longitude });
   };

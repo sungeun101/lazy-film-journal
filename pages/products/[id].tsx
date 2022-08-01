@@ -27,7 +27,7 @@ const ProductDetail: NextPage = () => {
   );
 
   const [toggleFav, { loading }] = useMutation(
-    `/api/products/${router.query.id}/fav`
+    `/api/products/${router.query.id}/favs`
   );
 
   const onFavClick = () => {

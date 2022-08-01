@@ -99,6 +99,7 @@ model Review {
   createdById  Int
   createdFor   User     @relation(name: "receivedReviews", fields: [createdForId], references: [id], onDelete: Cascade)
   createdForId Int
+  rate         Int
 }
 
 model Fav {

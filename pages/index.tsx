@@ -1,6 +1,7 @@
 import FloatingButton from "@components/floating-button";
 import Item from "@components/item";
 import Layout from "@components/layout";
+import Spinner from "@components/spinner";
 import useUser from "@libs/client/useUser";
 import { Product } from "@prisma/client";
 import type { NextPage } from "next";
@@ -23,16 +24,20 @@ const Home: NextPage = () => {
   return (
     <Layout title="Home" hasTabBar>
       <div className="flex flex-col space-y-5 divide-y">
-        {data?.products?.map((product) => (
-          <Item
-            id={product.id}
-            key={product.id}
-            title={product.name}
-            price={product.price}
-            comments={1}
-            hearts={product._count.favs}
-          />
-        ))}
+        {data && data.products ? (
+          data?.products?.map((product) => (
+            <Item
+              id={product.id}
+              key={product.id}
+              title={product.name}
+              price={product.price}
+              comments={1}
+              hearts={product._count.favs}
+            />
+          ))
+        ) : (
+          <Spinner />
+        )}
         <FloatingButton href="/products/upload">
           <svg
             className="h-6 w-6"

@@ -1,8 +1,11 @@
 import type { NextPage } from "next";
+import useSWR from "swr";
 import Item from "../../components/item";
 import Layout from "../../components/layout";
 
 const Cart: NextPage = () => {
+  const { data } = useSWR("/api/users/me/sales");
+  console.log(data);
   return (
     <Layout title="My Cart" canGoBack>
       <div className="flex flex-col space-y-5 pb-10  divide-y">

@@ -6,6 +6,11 @@ import useSWR from "swr";
 import FloatingButton from "../../components/floating-button";
 import Layout from "../../components/layout";
 
+export interface VideoInfo {
+  snippet: any;
+  id: { videoId: string };
+}
+
 const Explore: NextPage = () => {
   const [searchInput, setSearchInput] = useState("");
   const [searchWord, setSearchWord] = useState("minions2");
@@ -57,24 +62,16 @@ const Explore: NextPage = () => {
         </div>
 
         {data && data.items
-          ? data.items.map(
-              ({
-                snippet,
-                id: { videoId },
-              }: {
-                snippet: any;
-                id: { videoId: string };
-              }) => (
-                <Link key={videoId} href={`/explore/${videoId}`}>
-                  <a className="pt-4 block">
-                    <div className="w-full rounded-md shadow-sm bg-slate-300 aspect-video"></div>
-                    <h1 className="text-2xl mt-2 font-bold text-gray-900">
-                      {snippet.title}
-                    </h1>
-                  </a>
-                </Link>
-              )
-            )
+          ? data.items.map(({ snippet, id: { videoId } }: VideoInfo) => (
+              <Link key={videoId} href={`/explore/${videoId}`}>
+                <a className="pt-4 block">
+                  <div className="w-full rounded-md shadow-sm bg-slate-300 aspect-video"></div>
+                  <h1 className="text-2xl mt-2 font-bold text-gray-900">
+                    {snippet.title}
+                  </h1>
+                </a>
+              </Link>
+            ))
           : "loading..."}
 
         <FloatingButton href="/explore/create">

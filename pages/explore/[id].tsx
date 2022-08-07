@@ -1,8 +1,25 @@
 import type { NextPage } from "next";
+import { useRouter } from "next/router";
+import useSWR from "swr";
 import Layout from "../../components/layout";
 import Message from "../../components/message";
 
-const LiveItem: NextPage = () => {
+interface CommentInfo {
+  snippet: any;
+  id: string;
+}
+
+const VideoItem: NextPage = () => {
+  const {
+    query: { id },
+  } = useRouter();
+
+  const { data } = useSWR(
+    id
+      ? `https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet&order=relevance&videoId=${id}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+      : null
+  );
+
   return (
     <Layout canGoBack>
       <div className="py-10 px-4 space-y-4">
@@ -12,21 +29,23 @@ const LiveItem: NextPage = () => {
           <span className="text-2xl block mt-3 text-gray-900">
             Workout of the Day
           </span>
-          <p className="my-6 text-gray-700 space-y-3">
-            <p>Complete as many rounds as possible in 12 minutes of:</p>
-            <p>
-              3 rope climbs, from seated to 10 ft.
-              <br></br>50 double-unders
-            </p>
-            <p>Post rounds completed to comments.</p>
-          </p>
+          <p>contents</p>
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Live Chat</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Comments</h2>
           <div className="py-10 pb-16 h-[50vh] overflow-y-scroll  px-4 space-y-4">
-            <Message message="Hi how much are you selling them for?" />
-            <Message message="I want ￦20,000" reversed />
-            <Message message="미쳤어" />
+            {data?.items
+              ? data.items.map(
+                  ({ snippet, id }: CommentInfo, index: number) => (
+                    <div key={id}>
+                      <Message
+                        message={snippet.topLevelComment.snippet.textOriginal}
+                        reversed={index % 2 == 1}
+                      />
+                    </div>
+                  )
+                )
+              : "loading..."}
           </div>
           <div className="fixed py-2 bg-white  bottom-0 inset-x-0">
             <div className="flex relative max-w-md items-center  w-full mx-auto">
@@ -47,4 +66,4 @@ const LiveItem: NextPage = () => {
   );
 };
 
-export default LiveItem;
+export default VideoItem;

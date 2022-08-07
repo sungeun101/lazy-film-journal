@@ -48,6 +48,32 @@ export default function Layout({
       <div className={cls("pt-12", hasTabBar ? "pb-24" : "")}>{children}</div>
       {hasTabBar ? (
         <nav className="bg-white max-w-xl text-gray-700 border-t fixed bottom-0 w-full px-10 pb-5 pt-3 flex justify-between text-xs">
+          <Link href="/explore">
+            <a
+              className={cls(
+                "flex flex-col items-center space-y-2 ",
+                router.pathname === "/live"
+                  ? "text-orange-500"
+                  : "hover:text-gray-500 transition-colors"
+              )}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              <span>Explore</span>
+            </a>
+          </Link>
           <Link href="/">
             <a
               className={cls(
@@ -126,32 +152,7 @@ export default function Layout({
               <span>Chats</span>
             </a>
           </Link>
-          <Link href="/live">
-            <a
-              className={cls(
-                "flex flex-col items-center space-y-2 ",
-                router.pathname === "/live"
-                  ? "text-orange-500"
-                  : "hover:text-gray-500 transition-colors"
-              )}
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                ></path>
-              </svg>
-              <span>Live</span>
-            </a>
-          </Link>
+
           <Link href="/profile">
             <a
               className={cls(

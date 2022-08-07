@@ -81,10 +81,14 @@ const Community: NextPage = () => {
                     </svg>
                     <span>
                       Answer
-                      {post._count.answers &&
-                        post._count.answers > 1 &&
-                        "s"}{" "}
-                      {post._count.answers}
+                      {post._count.answers && post._count.answers > 1
+                        ? "s"
+                        : null}
+                      <span className="p-1">
+                        {post._count.answers && post._count.answers > 0
+                          ? post._count.answers
+                          : 0}
+                      </span>
                     </span>
                   </span>
                 </div>

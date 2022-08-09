@@ -1,5 +1,6 @@
 import Input from "@components/input";
 import type { NextPage } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import useSWR from "swr";
@@ -14,6 +15,7 @@ export interface VideoInfo {
 const Explore: NextPage = () => {
   const [searchInput, setSearchInput] = useState("");
   const [searchWord, setSearchWord] = useState("minions2");
+
   const { data } = useSWR(
     `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=20&q=${searchWord}review&regionCode=us&relevanceLanguage=en&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
   );
@@ -61,18 +63,32 @@ const Explore: NextPage = () => {
           </svg>
         </div>
 
-        {data && data.items
-          ? data.items.map(({ snippet, id: { videoId } }: VideoInfo) => (
-              <Link key={videoId} href={`/explore/${videoId}`}>
+        {data && data.items ? (
+          data.items.map(({ snippet, id: { videoId } }: VideoInfo) => (
+            <Link key={videoId} href={`/explore/${videoId}`}>
+              {snippet.thumbnails?.high?.url && (
                 <a className="pt-4 block">
-                  <div className="w-full rounded-md shadow-sm bg-slate-300 aspect-video"></div>
+                  <Image
+                    src={snippet.thumbnails.high.url}
+                    width={snippet.thumbnails.high.width}
+                    height={snippet.thumbnails.high.height}
+                    alt="thumbnail"
+                  />
                   <h1 className="text-2xl mt-2 font-bold text-gray-900">
                     {snippet.title}
                   </h1>
                 </a>
-              </Link>
-            ))
-          : "loading..."}
+              )}
+            </Link>
+          ))
+        ) : (
+          <>
+            <div className="w-full rounded-md shadow-sm bg-slate-300 aspect-video"></div>
+            <h1 className="text-2xl mt-2 font-bold text-gray-900">
+              loading...
+            </h1>
+          </>
+        )}
 
         <FloatingButton href="/explore/create">
           <svg

@@ -1,6 +1,8 @@
+import useMutation from "@libs/client/useMutation";
+import { Idea } from "@prisma/client";
 import type { NextPage } from "next";
-import Image from "next/image";
 import { useRouter } from "next/router";
+import { useForm } from "react-hook-form";
 import useSWR from "swr";
 import Layout from "../../components/layout";
 import Message from "../../components/message";
@@ -8,6 +10,14 @@ import Message from "../../components/message";
 interface CommentInfo {
   snippet: any;
   id: string;
+}
+interface UploadIdeaForm {
+  content: string;
+}
+
+interface MutationResult {
+  ok: boolean;
+  idea: Idea;
 }
 
 const VideoItem: NextPage = () => {
@@ -22,10 +32,20 @@ const VideoItem: NextPage = () => {
   );
   const { data: comments } = useSWR(
     id
-      ? `https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet&order=relevance&videoId=${id}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+      ? `https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet&maxResults=30&order=relevance&videoId=${id}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
       : null
   );
-  console.log(comments);
+  // console.log(comments);
+  const { register, handleSubmit, reset, watch } = useForm<UploadIdeaForm>();
+
+  const [uploadIdeas, { loading, data }] =
+    useMutation<MutationResult>("/api/ideas");
+
+  const onValid = (data: UploadIdeaForm) => {
+    uploadIdeas(data);
+    reset();
+  };
+
   return (
     <Layout canGoBack>
       <div className="space-y-4">
@@ -63,8 +83,12 @@ const VideoItem: NextPage = () => {
                 : "loading..."}
             </div>
             <div className="fixed p-2 bg-white  bottom-0 inset-x-0">
-              <div className="flex relative max-w-md items-center  w-full mx-auto">
+              <form
+                className="flex relative max-w-md items-center  w-full mx-auto"
+                onSubmit={handleSubmit(onValid)}
+              >
                 <input
+                  {...register("content", { required: true })}
                   placeholder="Any thoughts from the video?"
                   type="text"
                   className="shadow-sm rounded-full w-full border-gray-300 focus:ring-orange-500 focus:outline-none pr-12 focus:border-orange-500
@@ -75,7 +99,7 @@ const VideoItem: NextPage = () => {
                     &rarr;
                   </button>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         </section>

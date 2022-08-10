@@ -47,8 +47,8 @@ const VideoItem: NextPage = () => {
             {video?.items[0]?.snippet?.title}
           </h1>
           <div>
-            <h2 className="text-lg text-gray-900 py-4">Comments</h2>
-            <div className="py-10 pb-16 h-[50vh] overflow-y-scroll  px-4 space-y-4">
+            <h2 className="text-lg text-gray-900 pt-4 pb-2">Comments</h2>
+            <div className="pb-16 h-[50vh] overflow-y-scroll px-4 space-y-4">
               {comments?.items
                 ? comments.items.map(
                     ({ snippet, id }: CommentInfo, index: number) => (

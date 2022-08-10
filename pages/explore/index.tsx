@@ -36,33 +36,33 @@ const Explore: NextPage = () => {
 
   return (
     <Layout hasTabBar>
-      <div className="px-4 divide-y-[1px] space-y-4">
-        {/* searchbar */}
-        <div className="fixed inset-x-0 top-2 w-full max-w-md mx-auto">
-          <input
-            type="text"
-            placeholder="What have you watched?"
-            onChange={handleChange}
-            onKeyUp={handleSearch}
-            value={searchInput}
-            className="w-full pl-10 border-gray-300 rounded-full shadow-sm focus:ring-orange-500 focus:border-orange-500 focus:outline-none"
+      {/* searchbar */}
+      <div className="fixed inset-x-0 top-2 w-full max-w-md mx-auto">
+        <input
+          type="text"
+          placeholder="What have you watched?"
+          onChange={handleChange}
+          onKeyUp={handleSearch}
+          value={searchInput}
+          className="w-full pl-10 border-gray-300 rounded-full shadow-sm focus:ring-orange-500 focus:border-orange-500 focus:outline-none"
+        />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-full w-5 absolute inset-y-0 inset-x-3"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
           />
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-full w-5 absolute inset-y-0 inset-x-3"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-        </div>
+        </svg>
+      </div>
 
+      <div className="px-4 divide-y-[1px] space-y-4">
         {data && data.items ? (
           data.items.map(({ snippet, id: { videoId } }: VideoInfo) => (
             <Link key={videoId} href={`/explore/${videoId}`}>
@@ -75,7 +75,12 @@ const Explore: NextPage = () => {
                     alt="thumbnail"
                   />
                   <h1 className="text-2xl mt-2 font-bold text-gray-900">
-                    {snippet.title}
+                    {snippet.title.replace(
+                      /&#(\d+);/g,
+                      function (match: string, dec: number) {
+                        return String.fromCharCode(dec);
+                      }
+                    )}
                   </h1>
                 </a>
               )}

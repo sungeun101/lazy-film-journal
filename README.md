@@ -31,3 +31,5 @@ object-fit
 img나 video태그의 콘텐츠 크기를 어떤 방식으로 조절해 요소에 맞출 것인지 지정합니다.
 object-position 속성을 사용해 대체 요소 콘텐츠가 콘텐츠 박스 내에 위치할 지점을 바꿀 수 있습니다.
 object-fit을 tailwind로도 줄 수 있지만 Image컴포넌트에서 제공하는 objectFit="cover"을 통해 줄 수도 있습니다.
+
+If you aren't curious, you can't learn.

@@ -1,8 +1,9 @@
 import Input from "@components/input";
+import { cls } from "@libs/client/utils";
 import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 import FloatingButton from "../../components/floating-button";
 import Layout from "../../components/layout";
@@ -15,13 +16,21 @@ export interface VideoInfo {
 const maxResults = 1;
 
 const Explore: NextPage = () => {
+  const [reviewKind, setReviewKind] = useState("written");
   const [searchInput, setSearchInput] = useState("");
   const [searchWord, setSearchWord] = useState("minions2");
 
-  const { data } = useSWR(
-    ""
-    // `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${searchWord}review&regionCode=us&relevanceLanguage=en&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+  const { data: videos } = useSWR(
+    reviewKind === "video"
+      ? `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${searchWord}review&regionCode=us&relevanceLanguage=en&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+      : null
   );
+  const { data: written } = useSWR(
+    reviewKind !== "video"
+      ? `https://imdb-api.com/en/API/Reviews/${process.env.NEXT_PUBLIC_IMDB_API_KEY}/tt5113044`
+      : null
+  );
+  console.log(written);
 
   const handleChange = (event: any) => {
     const {
@@ -66,8 +75,8 @@ const Explore: NextPage = () => {
       </div>
 
       <div className="px-4 divide-y-[1px] space-y-4">
-        {data && data.items ? (
-          data.items.map(({ snippet, id: { videoId } }: VideoInfo) => (
+        {videos && videos.items ? (
+          videos.items.map(({ snippet, id: { videoId } }: VideoInfo) => (
             <Link key={videoId} href={`/explore/${videoId}`}>
               {snippet.thumbnails?.high?.url && (
                 <a className="pt-4 block">
@@ -89,6 +98,48 @@ const Explore: NextPage = () => {
               )}
             </Link>
           ))
+        ) : written ? (
+          <>
+            <h2 className="mt-4">
+              Have you checked <strong>{written.fullTitle}</strong>?
+            </h2>
+            <Image
+              src="https://m.media-amazon.com/images/M/MV5BZDQyODUwM2MtNzA0YS00ZjdmLTgzMjItZWRjN2YyYWE5ZTNjXkEyXkFqcGdeQXVyMTI2MzY1MjM1._V1_Ratio0.7273_AL_.jpg"
+              alt="imdbMovieImage"
+              width={67}
+              height={98}
+            ></Image>
+            {written.items.map(
+              ({
+                username,
+                rate,
+                title,
+                content,
+              }: {
+                username: string;
+                rate: string;
+                title: string;
+                content: string;
+              }) => (
+                <div key={username} className="pt-4">
+                  <p className="flex items-center">
+                    <svg
+                      className="h-5 w-5 text-yellow-400"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                    <span className="pl-1 text-xs">{rate}/10</span>
+                  </p>
+                  <h3 className="font-bold my-1.5">{title}</h3>
+                  <p>{content}</p>
+                </div>
+              )
+            )}
+          </>
         ) : (
           <>
             <div className="w-full rounded-md shadow-sm bg-slate-300 aspect-video"></div>
@@ -109,9 +160,9 @@ const Explore: NextPage = () => {
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth="2"
-              d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-            ></path>
+              strokeWidth={2}
+              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+            />
           </svg>
         </FloatingButton>
       </div>

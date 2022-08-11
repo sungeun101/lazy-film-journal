@@ -16,21 +16,21 @@ export interface VideoInfo {
 const maxResults = 1;
 
 const Explore: NextPage = () => {
-  const [reviewKind, setReviewKind] = useState("written");
+  const [isReviewVideo, setIsReviewVideo] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [searchWord, setSearchWord] = useState("minions2");
 
   const { data: videos } = useSWR(
-    reviewKind === "video"
+    isReviewVideo
       ? `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${searchWord}review&regionCode=us&relevanceLanguage=en&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
       : null
   );
   const { data: written } = useSWR(
-    reviewKind !== "video"
+    !isReviewVideo
       ? `https://imdb-api.com/en/API/Reviews/${process.env.NEXT_PUBLIC_IMDB_API_KEY}/tt5113044`
       : null
   );
-  console.log(written);
+  // console.log(written);
 
   const handleChange = (event: any) => {
     const {
@@ -46,10 +46,14 @@ const Explore: NextPage = () => {
     }
   };
 
+  const changeReviewType = () => {
+    setIsReviewVideo((prev) => !prev);
+  };
+
   return (
     <Layout hasTabBar>
       {/* searchbar */}
-      <div className="fixed inset-x-0 top-2 w-full max-w-md mx-auto">
+      <div className="fixed inset-x-0 top-2 w-full max-w-md mx-auto flex">
         <input
           type="text"
           placeholder="What have you watched?"
@@ -72,6 +76,14 @@ const Explore: NextPage = () => {
             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
           />
         </svg>
+        <div className="absolute inset-y-0 flex py-1.5 pr-1.5 right-0">
+          <button
+            onClick={changeReviewType}
+            className="flex focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 items-center bg-orange-500 rounded-full px-3 hover:bg-orange-600 text-sm text-white"
+          >
+            {isReviewVideo ? "Video" : "Written"}
+          </button>
+        </div>
       </div>
 
       <div className="px-4 divide-y-[1px] space-y-4">

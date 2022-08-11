@@ -1,5 +1,14 @@
 Serverless (...?!) using NextJS, Tailwind, Prisma, PlanetScale and Cloudflare
 
+## getServerSideProps
+
+페이지에서 getServerSideProps(서버 측 렌더링)라는 함수를 export 하면 Next.js는 getServerSideProps에서 반환된 데이터를 사용하여 각 요청에서 이 페이지를 미리 렌더링합니다.
+
+### 주의점
+
+- 페이지 이동할 때마다 getSeverSideProps 함수가 실행된다(No caching).
+- 데이터를 불러올 때 에러가 난다면 유저는 페이지에서 아무것도 볼 수 없다.
+
 ## NextJS Images
 
 ### Local Images

@@ -2,12 +2,18 @@ import React from "react";
 import Link from "next/link";
 import { cls } from "@libs/client/utils";
 import { useRouter } from "next/router";
+import useSWR from "swr";
+import { Idea } from "@prisma/client";
 
 interface LayoutProps {
   title?: string;
   canGoBack?: boolean;
   hasTabBar?: boolean;
   children: React.ReactNode;
+}
+interface IdeaResponse {
+  ok: boolean;
+  ideas: Idea[];
 }
 
 export default function Layout({
@@ -17,12 +23,15 @@ export default function Layout({
   children,
 }: LayoutProps) {
   const router = useRouter();
+
+  const { data, isValidating } = useSWR<IdeaResponse>("/api/ideas");
+
   const onClick = () => {
     router.back();
   };
   return (
     <div>
-      <div className="bg-white w-full h-12 max-w-xl justify-center text-lg px-10 font-medium  fixed text-gray-800 top-0  flex items-center">
+      <div className="bg-white w-full h-12 max-w-xl justify-center text-lg px-10 font-medium fixed text-gray-800 top-0  flex items-center">
         {canGoBack ? (
           <button onClick={onClick} className="absolute left-4">
             <svg
@@ -44,7 +53,33 @@ export default function Layout({
         {title ? (
           <span className={cls(canGoBack ? "mx-auto" : "", "")}>{title}</span>
         ) : null}
+        <button className="absolute right-6">
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+            />
+          </svg>
+          {data?.ideas && data.ideas.length > 0 && (
+            <span
+              className={`${
+                isValidating && "animate-ping"
+              } absolute -right-2 -top-1 hover:bg-orange-500 border-0 aspect-square border-transparent transition-colors cursor-pointer  shadow-xl bg-orange-400 rounded-full flex items-center justify-center text-white w-4 h-4 text-[8px]`}
+            >
+              {data.ideas.length}
+            </span>
+          )}
+        </button>
       </div>
+
       <div className={cls("pt-12", hasTabBar ? "pb-24" : "")}>{children}</div>
       {hasTabBar ? (
         <nav className="bg-white max-w-xl text-gray-700 border-t fixed bottom-0 w-full px-10 pb-5 pt-3 flex justify-between text-xs">

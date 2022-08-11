@@ -5,7 +5,11 @@ module.exports = {
     "./components/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      animation: {
+        "bounce-once": "bounce 1s 2",
+      },
+    },
   },
   plugins: [require("@tailwindcss/forms")],
 };

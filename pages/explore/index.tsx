@@ -12,12 +12,15 @@ export interface VideoInfo {
   id: { videoId: string };
 }
 
+const maxResults = 1;
+
 const Explore: NextPage = () => {
   const [searchInput, setSearchInput] = useState("");
   const [searchWord, setSearchWord] = useState("minions2");
 
   const { data } = useSWR(
-    `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=15&q=${searchWord}review&regionCode=us&relevanceLanguage=en&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+    ""
+    // `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${searchWord}review&regionCode=us&relevanceLanguage=en&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
   );
 
   const handleChange = (event: any) => {

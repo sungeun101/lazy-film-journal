@@ -1,9 +1,11 @@
 import useMutation from "@libs/client/useMutation";
+import { cls } from "@libs/client/utils";
 import { Idea } from "@prisma/client";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import Layout from "../../components/layout";
 import Message from "../../components/message";
 
@@ -20,6 +22,8 @@ interface MutationResult {
   idea: Idea;
 }
 
+const commentMaxResults = 1;
+
 const VideoItem: NextPage = () => {
   const {
     query: { id },
@@ -32,18 +36,26 @@ const VideoItem: NextPage = () => {
   );
   const { data: comments } = useSWR(
     id
-      ? `https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet&maxResults=30&order=relevance&videoId=${id}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+      ? `https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet&maxResults=${commentMaxResults}&order=relevance&videoId=${id}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
       : null
   );
-  // console.log(comments);
-  const { register, handleSubmit, reset, watch } = useForm<UploadIdeaForm>();
 
-  const [uploadIdeas, { loading, data }] =
+  const { register, handleSubmit, reset } = useForm<UploadIdeaForm>();
+
+  const [uploadIdeas, { data: ideaData, loading }] =
     useMutation<MutationResult>("/api/ideas");
+
+  const { mutate } = useSWRConfig();
+
+  useEffect(() => {
+    if (ideaData && ideaData.ok) {
+      reset();
+      mutate("/api/ideas");
+    }
+  }, [ideaData, mutate, reset]);
 
   const onValid = (data: UploadIdeaForm) => {
     uploadIdeas(data);
-    reset();
   };
 
   return (
@@ -95,8 +107,13 @@ const VideoItem: NextPage = () => {
                   text-xs"
                 />
                 <div className="absolute inset-y-0 flex py-1.5 pr-1.5 right-0">
-                  <button className="flex focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 items-center bg-orange-500 rounded-full px-3 hover:bg-orange-600 text-sm text-white">
-                    &rarr;
+                  <button
+                    className={cls(
+                      loading ? "animate-spin" : "",
+                      "flex focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 items-center bg-orange-500 rounded-full px-3 hover:bg-orange-600 text-sm text-white"
+                    )}
+                  >
+                    {!loading && <span className="animate-spin">&rarr;</span>}
                   </button>
                 </div>
               </form>

@@ -26,12 +26,18 @@ async function handler(
       ok: true,
       idea,
     });
+  } else if (req.method === "GET") {
+    const ideas = await client.idea.findMany({});
+    res.json({
+      ok: true,
+      ideas,
+    });
   }
 }
 
 export default withApiSession(
   withHandler({
-    methods: ["POST"],
+    methods: ["GET", "POST"],
     handler,
   })
 );

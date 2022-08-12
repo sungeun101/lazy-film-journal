@@ -23,8 +23,9 @@ export default function Layout({
   children,
 }: LayoutProps) {
   const router = useRouter();
+  const { pathname } = router;
 
-  const { data, isValidating } = useSWR<IdeaResponse>("/api/ideas");
+  const { data: ideaData, isValidating } = useSWR<IdeaResponse>("/api/ideas");
 
   const onClick = () => {
     router.back();
@@ -53,31 +54,34 @@ export default function Layout({
         {title ? (
           <span className={cls(canGoBack ? "mx-auto" : "", "")}>{title}</span>
         ) : null}
-        <button className="absolute right-6">
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-            />
-          </svg>
-          {data?.ideas && data.ideas.length > 0 && (
-            <span
-              className={`${
-                isValidating && "animate-ping"
-              } absolute -right-2 -top-1 hover:bg-orange-500 border-0 aspect-square border-transparent transition-colors cursor-pointer  shadow-xl bg-orange-400 rounded-full flex items-center justify-center text-white w-4 h-4 text-[8px]`}
+        {/* idea cart */}
+        {pathname !== "/explore" && (
+          <button className="absolute right-6">
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              {data.ideas.length}
-            </span>
-          )}
-        </button>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+              />
+            </svg>
+            {ideaData?.ideas && ideaData.ideas.length > 0 && (
+              <span
+                className={`${
+                  isValidating && "animate-ping"
+                } absolute -right-2 -top-1 hover:bg-orange-500 border-0 aspect-square border-transparent transition-colors cursor-pointer  shadow-xl bg-orange-400 rounded-full flex items-center justify-center text-white w-4 h-4 text-[8px]`}
+              >
+                {ideaData.ideas.length}
+              </span>
+            )}
+          </button>
+        )}
       </div>
 
       <div className={cls("pt-12", hasTabBar ? "pb-24" : "")}>{children}</div>

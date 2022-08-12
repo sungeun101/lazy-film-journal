@@ -1,9 +1,7 @@
-import Input from "@components/input";
-import { cls } from "@libs/client/utils";
 import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useSWR from "swr";
 import FloatingButton from "../../components/floating-button";
 import Layout from "../../components/layout";
@@ -13,7 +11,7 @@ export interface VideoInfo {
   id: { videoId: string };
 }
 
-const maxResults = 1;
+const maxResults = 2;
 
 const Explore: NextPage = () => {
   const [isReviewVideo, setIsReviewVideo] = useState(false);
@@ -53,7 +51,7 @@ const Explore: NextPage = () => {
   return (
     <Layout hasTabBar>
       {/* searchbar */}
-      <div className="fixed inset-x-0 top-2 w-full max-w-md mx-auto flex">
+      <section className="fixed inset-x-0 top-2 w-full max-w-md mx-auto flex">
         <input
           type="text"
           placeholder="What have you watched?"
@@ -84,9 +82,9 @@ const Explore: NextPage = () => {
             {isReviewVideo ? "Video" : "Written"}
           </button>
         </div>
-      </div>
+      </section>
 
-      <div className="px-4 divide-y-[1px] space-y-4">
+      <main className="px-4 divide-y-[1px] space-y-4 mt-4">
         {videos && videos.items ? (
           videos.items.map(({ snippet, id: { videoId } }: VideoInfo) => (
             <Link key={videoId} href={`/explore/${videoId}`}>
@@ -112,7 +110,7 @@ const Explore: NextPage = () => {
           ))
         ) : written ? (
           <>
-            <h2 className="mt-4">
+            <h2>
               Have you checked <strong>{written.fullTitle}</strong>?
             </h2>
             <Image
@@ -177,7 +175,7 @@ const Explore: NextPage = () => {
             />
           </svg>
         </FloatingButton>
-      </div>
+      </main>
     </Layout>
   );
 };

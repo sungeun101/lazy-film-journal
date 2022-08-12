@@ -1,5 +1,4 @@
 import useMutation from "@libs/client/useMutation";
-import { cls } from "@libs/client/utils";
 import { Idea } from "@prisma/client";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
@@ -30,9 +29,10 @@ const VideoItem: NextPage = () => {
   } = useRouter();
 
   const { data: video } = useSWR(
-    id
-      ? `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id=${id}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
-      : null
+    // id
+    //   ? `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id=${id}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+    //   :
+    null
   );
   const { data: comments } = useSWR(
     id
@@ -42,7 +42,7 @@ const VideoItem: NextPage = () => {
 
   const { register, handleSubmit, reset } = useForm<UploadIdeaForm>();
 
-  const [uploadIdeas, { data: ideaData, loading }] =
+  const [uploadIdeas, { data: ideaData }] =
     useMutation<MutationResult>("/api/ideas");
 
   const { mutate } = useSWRConfig();
@@ -107,13 +107,8 @@ const VideoItem: NextPage = () => {
                   text-xs"
                 />
                 <div className="absolute inset-y-0 flex py-1.5 pr-1.5 right-0">
-                  <button
-                    className={cls(
-                      loading ? "animate-spin" : "",
-                      "flex focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 items-center bg-orange-500 rounded-full px-3 hover:bg-orange-600 text-sm text-white"
-                    )}
-                  >
-                    {!loading && <span className="animate-spin">&rarr;</span>}
+                  <button className="flex focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 items-center bg-orange-500 rounded-full px-3 hover:bg-orange-600 text-sm text-white">
+                    <span>&rarr;</span>
                   </button>
                 </div>
               </form>

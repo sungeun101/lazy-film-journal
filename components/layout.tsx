@@ -54,7 +54,7 @@ export default function Layout({
         {title ? (
           <span className={cls(canGoBack ? "mx-auto" : "", "")}>{title}</span>
         ) : null}
-        {/* idea cart */}
+        {/* idea cart button */}
         {pathname !== "/explore" && (
           <button className="absolute right-6">
             <svg

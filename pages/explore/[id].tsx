@@ -19,9 +19,10 @@ interface UploadIdeaForm {
 interface MutationResult {
   ok: boolean;
   idea: Idea;
+  error?: string;
 }
 
-const commentMaxResults = 1;
+const commentMaxResults = 2;
 
 const VideoItem: NextPage = () => {
   const {
@@ -42,17 +43,17 @@ const VideoItem: NextPage = () => {
 
   const { register, handleSubmit, reset } = useForm<UploadIdeaForm>();
 
-  const [uploadIdeas, { data: ideaData }] =
+  const [uploadIdeas, { data: ideaResult }] =
     useMutation<MutationResult>("/api/ideas");
 
   const { mutate } = useSWRConfig();
 
   useEffect(() => {
-    if (ideaData && ideaData.ok) {
-      reset();
+    if (ideaResult && ideaResult.ok) {
       mutate("/api/ideas");
     }
-  }, [ideaData, mutate, reset]);
+    reset();
+  }, [ideaResult, mutate, reset]);
 
   const onValid = (data: UploadIdeaForm) => {
     uploadIdeas(data);
@@ -79,21 +80,24 @@ const VideoItem: NextPage = () => {
             {video?.items[0]?.snippet?.title}
           </h1>
           <div>
-            <h2 className="text-lg text-gray-900 pt-4 pb-2">Comments</h2>
-            <div className="pb-16 h-[50vh] overflow-y-scroll px-4 space-y-4">
+            <h2 className="text-lg text-gray-900 pt-4 py-2">Comments</h2>
+            <main className="pb-16 h-[50vh] overflow-y-scroll px-1 space-y-4">
               {comments?.items
                 ? comments.items.map(
                     ({ snippet, id }: CommentInfo, index: number) => (
-                      <div key={id}>
+                      <div key={id} onClick={handleSubmit(onValid)}>
                         <Message
                           message={snippet.topLevelComment.snippet.textOriginal}
                           reversed={index % 2 == 1}
+                          commentId={id}
                         />
                       </div>
                     )
                   )
                 : "loading..."}
-            </div>
+            </main>
+
+            {/* my comment */}
             <div className="fixed p-2 bg-white  bottom-0 inset-x-0">
               <form
                 className="flex relative max-w-md items-center  w-full mx-auto"

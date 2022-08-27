@@ -46,10 +46,8 @@ async function handler(
     // };
     // const result = smtpTransport.sendMail(mailOptions, (error, responses) => {
     //   if (error) {
-    //     console.log(error);
     //     return null;
     //   } else {
-    //     console.log(responses);
     //     return null;
     //   }
     // });

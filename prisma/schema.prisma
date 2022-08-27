@@ -140,4 +140,6 @@ model Idea {
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      Int
   content     String   @db.MediumText
-}
+  bookmarked  Boolean  @default(false)
+  commentId   String
+  }

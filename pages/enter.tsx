@@ -6,6 +6,7 @@ import Input from "@components/input";
 import useMutation from "@libs/client/useMutation";
 import { cls } from "@libs/client/utils";
 import { useRouter } from "next/router";
+import useUser from "@libs/client/useUser";
 
 interface EnterForm {
   email?: string;
@@ -28,6 +29,8 @@ const Enter: NextPage = () => {
   const [confirmToken, { loading: tokenLoading, data: tokenData }] =
     useMutation<MutationResult>("/api/users/confirm");
 
+  const { user, isLoading } = useUser();
+
   const [method, setMethod] = useState<"email" | "phone">("email");
 
   const router = useRouter();
@@ -37,6 +40,10 @@ const Enter: NextPage = () => {
       router.push("/");
     }
   }, [tokenData, router]);
+
+  if (user) {
+    router.push("/");
+  }
 
   const onEmailClick = () => {
     reset();

@@ -79,7 +79,7 @@ const Explore: NextPage = () => {
             onClick={changeReviewType}
             className="flex focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 items-center bg-orange-500 rounded-full px-3 hover:bg-orange-600 text-sm text-white"
           >
-            {isReviewVideo ? "Video" : "Written"}
+            {isReviewVideo ? "Written" : "Video"}
           </button>
         </div>
       </section>

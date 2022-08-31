@@ -1,3 +1,5 @@
+import useMutation from "@libs/client/useMutation";
+import { Watched } from "@prisma/client";
 import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,13 +13,17 @@ export interface VideoInfo {
   id: { videoId: string };
 }
 interface SearchedTitles {
-  id: string;
+  id: number;
   poster_path: string;
   original_name?: string;
   original_title?: string;
   first_air_date?: string;
   release_date?: string;
   overview: string;
+}
+interface MutationResult {
+  ok: boolean;
+  watched: Watched[];
 }
 
 const maxResults = 2;
@@ -51,6 +57,9 @@ const Explore: NextPage = () => {
   );
   console.log(tmdb);
 
+  const [uploadWatched, { loading, data: watchedData }] =
+    useMutation<MutationResult>("/api/archive");
+
   useEffect(() => {
     if (searchWord === "") {
       setShowSearchResult(false);
@@ -83,7 +92,10 @@ const Explore: NextPage = () => {
     setMovieOrSeries(value);
   };
 
-  const addToWatched = () => {};
+  const addToArchive = (data: SearchedTitles) => {
+    if (loading) return;
+    uploadWatched({ ...data, isMovie: Boolean(data.release_date) });
+  };
 
   return (
     <Layout hasTabBar>
@@ -131,31 +143,43 @@ const Explore: NextPage = () => {
                 release_date,
                 overview,
               }: SearchedTitles) => (
-                <Link key={id} href={`/explore/${id}`} onClick={addToWatched}>
-                  <a className="flex gap-2 border rounded-lg overflow-hidden shadow-md">
-                    <Image
-                      src={`https://www.themoviedb.org/t/p/w94_and_h141_bestv2/${poster_path}`}
-                      width={94}
-                      height={141}
-                      alt="thumbnail"
-                    />
-                    <div className="max-w-[80%] p-2 pl-1">
-                      <h1 className="text-xl font-bold text-gray-900 line-clamp-1">
-                        {movieOrSeries === "movie"
-                          ? original_title
-                          : original_name}
-                      </h1>
-                      <h2 className="text-sm text-gray-400 mb-2">
-                        {movieOrSeries === "movie"
-                          ? release_date
-                          : first_air_date}
-                      </h2>
-                      <span className="text-sm text-gray-800 line-clamp-3">
-                        {overview}
-                      </span>
-                    </div>
-                  </a>
-                </Link>
+                <div
+                  key={id}
+                  onClick={() =>
+                    addToArchive({
+                      id,
+                      poster_path,
+                      original_name,
+                      original_title,
+                      first_air_date,
+                      release_date,
+                      overview,
+                    })
+                  }
+                  className="flex gap-2 border rounded-lg overflow-hidden shadow-md cursor-pointer"
+                >
+                  <Image
+                    src={`https://www.themoviedb.org/t/p/w94_and_h141_bestv2/${poster_path}`}
+                    width={94}
+                    height={141}
+                    alt="thumbnail"
+                  />
+                  <div className="max-w-[80%] p-2 pl-1">
+                    <h1 className="text-xl font-bold text-gray-900 line-clamp-1">
+                      {movieOrSeries === "movie"
+                        ? original_title
+                        : original_name}
+                    </h1>
+                    <h2 className="text-sm text-gray-400 mb-2">
+                      {movieOrSeries === "movie"
+                        ? release_date
+                        : first_air_date}
+                    </h2>
+                    <span className="text-sm text-gray-800 line-clamp-3">
+                      {overview}
+                    </span>
+                  </div>
+                </div>
               )
             )}
         </main>

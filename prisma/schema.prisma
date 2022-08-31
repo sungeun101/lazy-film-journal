@@ -31,6 +31,7 @@ model User {
   sales           Sale[]
   purchases       Purchase[]
   ideas           Idea[]
+  watched         Watched[]
 }
 
 model Token {
@@ -142,4 +143,19 @@ model Idea {
   content     String   @db.MediumText
   bookmarked  Boolean  @default(false)
   commentId   String
-  }
+  watched     Watched  @relation(fields: [watchedId], references: [id], onDelete: Cascade)
+  watchedId   Int
+}
+
+model Watched {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  image       String
+  name        String
+  price       Int
+  description String   @db.MediumText
+  idea        Idea[]
+}

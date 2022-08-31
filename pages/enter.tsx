@@ -24,26 +24,22 @@ const Enter: NextPage = () => {
   const { register: tokenRegister, handleSubmit: tokenHandleSubmit } =
     useForm<TokenForm>();
 
-  const [enter, { loading, data, error }] =
+  const [enter, { loading, data }] =
     useMutation<MutationResult>("/api/users/enter");
   const [confirmToken, { loading: tokenLoading, data: tokenData }] =
     useMutation<MutationResult>("/api/users/confirm");
 
-  const { user, isLoading } = useUser();
+  const { user } = useUser();
 
   const [method, setMethod] = useState<"email" | "phone">("email");
 
   const router = useRouter();
 
   useEffect(() => {
-    if (tokenData?.ok) {
+    if (tokenData?.ok || user) {
       router.push("/");
     }
-  }, [tokenData, router]);
-
-  if (user) {
-    router.push("/");
-  }
+  }, [user, tokenData, router]);
 
   const onEmailClick = () => {
     reset();

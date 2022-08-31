@@ -83,10 +83,12 @@ const Explore: NextPage = () => {
     setMovieOrSeries(value);
   };
 
+  const addToWatched = () => {};
+
   return (
     <Layout hasTabBar>
       {/* searchbar */}
-      <section className="fixed inset-x-0 top-2 w-full max-w-md mx-auto flex">
+      <section className="fixed inset-x-0 top-2 w-full max-w-md mx-auto flex z-10">
         <input
           type="text"
           placeholder="What have you watched?"
@@ -95,23 +97,9 @@ const Explore: NextPage = () => {
           value={userInput}
           className="w-full pl-28 border-gray-300 rounded-full shadow-sm focus:ring-orange-500 focus:border-orange-500 focus:outline-none"
         />
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-full w-5 absolute inset-y-0 inset-x-3"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
-        <div className="absolute inset-y-0 flex py-1.5 pr-1.5 left-9">
+        <div className="absolute inset-y-0 left-2 flex p-1 text-orange-500">
           <select
-            className="flex ring-2 focus:ring-offset-2 ring-orange-500 items-center text-orange-500 rounded-full px-2 text-xs w-16"
+            className="text-orange-500 text-xsoutline-none ring-orange-500 ring-0 focus:ring-0 border-none text-sm"
             onChange={handleSearchOption}
             value={movieOrSeries}
           >
@@ -130,7 +118,7 @@ const Explore: NextPage = () => {
       </section>
 
       {showSearchResult ? (
-        <main className="px-4 space-y-4 mt-4">
+        <main className="px-4 space-y-5 mt-4 z-0">
           {tmdb?.results
             ?.slice(0, 8)
             .map(
@@ -143,7 +131,7 @@ const Explore: NextPage = () => {
                 release_date,
                 overview,
               }: SearchedTitles) => (
-                <Link key={id} href={`/explore/${id}`}>
+                <Link key={id} href={`/explore/${id}`} onClick={addToWatched}>
                   <a className="flex gap-2 border rounded-lg overflow-hidden shadow-md">
                     <Image
                       src={`https://www.themoviedb.org/t/p/w94_and_h141_bestv2/${poster_path}`}
@@ -151,7 +139,7 @@ const Explore: NextPage = () => {
                       height={141}
                       alt="thumbnail"
                     />
-                    <div className="max-w-[80%] py-2 px-1">
+                    <div className="max-w-[80%] p-2 pl-1">
                       <h1 className="text-xl font-bold text-gray-900 line-clamp-1">
                         {movieOrSeries === "movie"
                           ? original_title

@@ -19,6 +19,7 @@ interface ProductResponse {
 
 const Archive: NextPage = () => {
   const { data } = useSWR<ProductResponse>("/api/idea/bookmark");
+
   return (
     <Layout title="Archive" hasTabBar>
       <div className="flex flex-col space-y-5 divide-y">

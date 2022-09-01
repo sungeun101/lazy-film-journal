@@ -37,7 +37,13 @@ async function handler(
     res.json({ ok: true, watched });
   }
   if (req.method === "GET") {
+    const {
+      session: { user },
+    } = req;
     const watched = await client.watched.findMany({
+      where: {
+        userId: user?.id,
+      },
       include: {
         _count: {
           select: { ideas: true },

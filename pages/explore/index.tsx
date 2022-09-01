@@ -1,9 +1,11 @@
+import SearchedTitle from "@components/searchedTitle";
 import useMutation from "@libs/client/useMutation";
 import { Watched } from "@prisma/client";
 import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import useSWR from "swr";
 import FloatingButton from "../../components/floating-button";
 import Layout from "../../components/layout";
@@ -12,7 +14,7 @@ export interface VideoInfo {
   snippet: any;
   id: { videoId: string };
 }
-interface SearchedTitles {
+export interface TitleInfo {
   id: number;
   poster_path: string;
   original_name?: string;
@@ -29,17 +31,44 @@ interface MutationResult {
 const maxResults = 2;
 
 // tmdb sample
-// {"page":1,"results":[{"backdrop_path":"/iW74tZ8y2qobdpt4J9UQ71sw8q7.jpg","first_air_date":"2020-10-02","genre_ids":[18,35],"id":82596,"name":"Emily in Paris","origin_country":["US"],"original_language":"en","original_name":"Emily in Paris","overview":"When ambitious Chicago marketing exec Emily unexpectedly lands her dream job in Paris, she embraces a new life as she juggles work, friends and romance.","popularity":57.128,"poster_path":"/Ak59Y9bzykmV0wAiwKsqrbORDBo.jpg","vote_average":8,"vote_count":854}],"total_pages":1,"total_results":1}
+// const tmdb = {
+//   page: 1,
+//   results: [
+//     {
+//       backdrop_path: "/iW74tZ8y2qobdpt4J9UQ71sw8q7.jpg",
+//       first_air_date: "2020-10-02",
+//       genre_ids: [18, 35],
+//       id: 82596,
+//       name: "Emily in Paris",
+//       origin_country: ["US"],
+//       original_language: "en",
+//       original_name: "Emily in Paris",
+//       overview:
+//         "When ambitious Chicago marketing exec Emily unexpectedly lands her dream job in Paris, she embraces a new life as she juggles work, friends and romance.",
+//       popularity: 57.128,
+//       poster_path: "/Ak59Y9bzykmV0wAiwKsqrbORDBo.jpg",
+//       vote_average: 8,
+//       vote_count: 854,
+//     },
+//   ],
+//   total_pages: 1,
+//   total_results: 1,
+// };
 
 const Explore: NextPage = () => {
   const [isReviewVideo, setIsReviewVideo] = useState(false);
-  const [userInput, setUserInput] = useState("");
-  const [searchWord, setSearchWord] = useState("");
-  const [movieOrSeries, setMovieOrSeries] = useState("movie");
-  const [showSearchResult, setShowSearchResult] = useState(false);
 
+  const {
+    register: searchRegister,
+    handleSubmit: handleSearchSubmit,
+    getValues,
+    formState: { isDirty, dirtyFields },
+  } = useForm();
+  const { searchWord, movieOrSeries } = getValues();
+
+  console.log("formstate", isDirty, dirtyFields);
   const { data: videos } = useSWR(
-    isReviewVideo && searchWord !== ""
+    isReviewVideo
       ? `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${searchWord}review&regionCode=us&relevanceLanguage=en&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
       : null
   );
@@ -51,7 +80,7 @@ const Explore: NextPage = () => {
     null
   );
   const { data: tmdb } = useSWR(
-    showSearchResult && searchWord !== ""
+    searchWord && movieOrSeries
       ? `https://api.themoviedb.org/3/search/${movieOrSeries}?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=${searchWord}&page=1&include_adult=false&language=en`
       : null
   );
@@ -60,60 +89,36 @@ const Explore: NextPage = () => {
   const [uploadWatched, { loading, data: watchedData }] =
     useMutation<MutationResult>("/api/archive");
 
-  useEffect(() => {
-    if (searchWord === "") {
-      setShowSearchResult(false);
-    }
-  }, [searchWord]);
-
-  const handleChange = (event: any) => {
-    const {
-      target: { value },
-      key,
-    } = event;
-    setSearchWord("");
-    setUserInput(value);
-  };
-
-  const handleSearch = (event: any) => {
-    if (event.key === "Enter") {
-      setShowSearchResult(true);
-      setSearchWord(userInput);
-    }
+  const onSearchValid = (userInput: any) => {
+    console.log("userinput", userInput);
   };
 
   const changeReviewType = () => {
     setIsReviewVideo((prev) => !prev);
   };
 
-  const handleSearchOption = (event: any) => {
-    const { value } = event.target;
-    setShowSearchResult(false);
-    setMovieOrSeries(value);
-  };
-
-  const addToArchive = (data: SearchedTitles) => {
+  const addToArchive = (title: TitleInfo) => {
     if (loading) return;
-    uploadWatched({ ...data, isMovie: Boolean(data.release_date) });
+    uploadWatched({ ...title, isMovie: Boolean(title.release_date) });
   };
 
   return (
     <Layout hasTabBar>
       {/* searchbar */}
-      <section className="fixed inset-x-0 top-2 w-full max-w-md mx-auto flex z-10">
+      <form
+        onSubmit={handleSearchSubmit(onSearchValid)}
+        className="fixed inset-x-0 top-2 w-full max-w-md mx-auto flex z-10"
+      >
         <input
+          {...searchRegister("searchWord")}
           type="text"
           placeholder="What have you watched?"
-          onChange={handleChange}
-          onKeyUp={handleSearch}
-          value={userInput}
           className="w-full pl-28 border-gray-300 rounded-full shadow-sm focus:ring-orange-500 focus:border-orange-500 focus:outline-none"
         />
         <div className="absolute inset-y-0 left-2 flex p-1 text-orange-500">
           <select
             className="text-orange-500 text-xsoutline-none ring-orange-500 ring-0 focus:ring-0 border-none text-sm"
-            onChange={handleSearchOption}
-            value={movieOrSeries}
+            {...searchRegister("movieOrSeries")}
           >
             <option value="movie">Movie</option>
             <option value="tv">Series</option>
@@ -127,61 +132,59 @@ const Explore: NextPage = () => {
             {isReviewVideo ? "Written" : "Video"}
           </button>
         </div>
-      </section>
+      </form>
 
-      {showSearchResult ? (
+      {searchWord && movieOrSeries ? (
         <main className="px-4 space-y-5 mt-4 z-0">
-          {tmdb?.results
-            ?.slice(0, 8)
-            .map(
-              ({
-                id,
-                poster_path,
-                original_name,
-                original_title,
-                first_air_date,
-                release_date,
-                overview,
-              }: SearchedTitles) => (
-                <div
-                  key={id}
-                  onClick={() =>
-                    addToArchive({
-                      id,
-                      poster_path,
-                      original_name,
-                      original_title,
-                      first_air_date,
-                      release_date,
-                      overview,
-                    })
-                  }
-                  className="flex gap-2 border rounded-lg overflow-hidden shadow-md cursor-pointer"
-                >
-                  <Image
-                    src={`https://www.themoviedb.org/t/p/w94_and_h141_bestv2/${poster_path}`}
-                    width={94}
-                    height={141}
-                    alt="thumbnail"
-                  />
-                  <div className="max-w-[80%] p-2 pl-1">
-                    <h1 className="text-xl font-bold text-gray-900 line-clamp-1">
-                      {movieOrSeries === "movie"
-                        ? original_title
-                        : original_name}
-                    </h1>
-                    <h2 className="text-sm text-gray-400 mb-2">
-                      {movieOrSeries === "movie"
-                        ? release_date
-                        : first_air_date}
-                    </h2>
-                    <span className="text-sm text-gray-800 line-clamp-3">
-                      {overview}
-                    </span>
+          {tmdb?.results && tmdb.results.length === 0 ? (
+            <div className="flex justify-center">
+              Nothing Found. Are you sure you are searching for
+              <span className="font-bold pl-1 italic">
+                {movieOrSeries === "movie" ? "movie" : "series"}
+              </span>
+              ?
+            </div>
+          ) : (
+            tmdb?.results
+              .slice(0, 8)
+              .map(
+                ({
+                  id,
+                  poster_path,
+                  original_name,
+                  original_title,
+                  first_air_date,
+                  release_date,
+                  overview,
+                }: TitleInfo) => (
+                  <div
+                    key={id}
+                    onClick={() =>
+                      addToArchive({
+                        id,
+                        poster_path,
+                        original_name,
+                        original_title,
+                        first_air_date,
+                        release_date,
+                        overview,
+                      })
+                    }
+                    className="flex gap-2 border rounded-lg overflow-hidden shadow-md cursor-pointer"
+                  >
+                    <SearchedTitle
+                      key={id}
+                      poster_path={poster_path}
+                      original_name={original_name || ""}
+                      original_title={original_title || ""}
+                      first_air_date={first_air_date || ""}
+                      release_date={release_date || ""}
+                      overview={overview}
+                    />
                   </div>
-                </div>
+                )
               )
-            )}
+          )}
         </main>
       ) : (
         <main className="px-4 divide-y-[1px] space-y-4 mt-4">
@@ -197,7 +200,7 @@ const Explore: NextPage = () => {
                       alt="thumbnail"
                     />
                     <h1 className="text-2xl mt-2 font-bold text-gray-900">
-                      {snippet.title.replace(
+                      {snippet.replace(
                         /&#(\d+);/g,
                         function (match: string, dec: number) {
                           return String.fromCharCode(dec);

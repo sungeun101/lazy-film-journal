@@ -1,6 +1,9 @@
 import SearchedTitle from "@components/searchedTitle";
+import Spinner from "@components/spinner";
 import useMutation from "@libs/client/useMutation";
+import { handleFetch } from "@libs/client/utils";
 import { Watched } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
 import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -57,16 +60,36 @@ const maxResults = 2;
 
 const Explore: NextPage = () => {
   const [isReviewVideo, setIsReviewVideo] = useState(false);
+  const [showSearchResult, setShowSearchResult] = useState(false);
 
   const {
     register: searchRegister,
     handleSubmit: handleSearchSubmit,
     getValues,
-    formState: { isDirty, dirtyFields },
+    watch,
   } = useForm();
   const { searchWord, movieOrSeries } = getValues();
+  const watchAllFields = watch();
 
-  console.log("formstate", isDirty, dirtyFields);
+  useEffect(() => {
+    const subscription = watch((value) => {
+      if (value.searchWord === "") {
+        setShowSearchResult(false);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
+
+  const { isFetching: isFetchingTmdb, data: tmdb } = useQuery(
+    ["archive", watchAllFields],
+    () =>
+      handleFetch(
+        `https://api.themoviedb.org/3/search/${movieOrSeries}?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=${searchWord}&page=1&include_adult=false&language=en`
+      ),
+    {
+      enabled: !!searchWord && !!showSearchResult,
+    }
+  );
   const { data: videos } = useSWR(
     isReviewVideo
       ? `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${searchWord}review&regionCode=us&relevanceLanguage=en&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
@@ -79,28 +102,26 @@ const Explore: NextPage = () => {
     //   :
     null
   );
-  const { data: tmdb } = useSWR(
-    searchWord && movieOrSeries
-      ? `https://api.themoviedb.org/3/search/${movieOrSeries}?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=${searchWord}&page=1&include_adult=false&language=en`
-      : null
-  );
-  console.log(tmdb);
 
   const [uploadWatched, { loading, data: watchedData }] =
     useMutation<MutationResult>("/api/archive");
 
   const onSearchValid = (userInput: any) => {
-    console.log("userinput", userInput);
-  };
-
-  const changeReviewType = () => {
-    setIsReviewVideo((prev) => !prev);
+    console.log("검색");
+    setShowSearchResult(true);
   };
 
   const addToArchive = (title: TitleInfo) => {
     if (loading) return;
     uploadWatched({ ...title, isMovie: Boolean(title.release_date) });
+    if (watchedData?.ok) {
+      alert("Saved!");
+    }
   };
+
+  // const changeReviewType = () => {
+  //   setIsReviewVideo((prev) => !prev);
+  // };
 
   return (
     <Layout hasTabBar>
@@ -117,26 +138,28 @@ const Explore: NextPage = () => {
         />
         <div className="absolute inset-y-0 left-2 flex p-1 text-orange-500">
           <select
-            className="text-orange-500 text-xsoutline-none ring-orange-500 ring-0 focus:ring-0 border-none text-sm"
+            className="cursor-pointer text-orange-500 outline-none ring-orange-500 ring-0 focus:ring-0 border-none text-sm"
             {...searchRegister("movieOrSeries")}
           >
             <option value="movie">Movie</option>
             <option value="tv">Series</option>
           </select>
         </div>
-        <div className="absolute inset-y-0 flex py-1.5 pr-1.5 right-0">
+        {/* <div className="absolute inset-y-0 flex py-1.5 pr-1.5 right-0">
           <button
             onClick={changeReviewType}
             className="flex focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 items-center bg-orange-500 rounded-full px-3 hover:bg-orange-600 text-sm text-white"
           >
             {isReviewVideo ? "Written" : "Video"}
           </button>
-        </div>
+        </div> */}
       </form>
 
-      {searchWord && movieOrSeries ? (
+      {showSearchResult ? (
         <main className="px-4 space-y-5 mt-4 z-0">
-          {tmdb?.results && tmdb.results.length === 0 ? (
+          {isFetchingTmdb ? (
+            <Spinner />
+          ) : tmdb?.results?.length === 0 ? (
             <div className="flex justify-center">
               Nothing Found. Are you sure you are searching for
               <span className="font-bold pl-1 italic">
@@ -173,7 +196,7 @@ const Explore: NextPage = () => {
                     className="flex gap-2 border rounded-lg overflow-hidden shadow-md cursor-pointer"
                   >
                     <SearchedTitle
-                      key={id}
+                      id={id}
                       poster_path={poster_path}
                       original_name={original_name || ""}
                       original_title={original_title || ""}

@@ -1,9 +1,10 @@
 import Layout from "@components/layout";
 import SearchedTitle from "@components/searchedTitle";
 import Spinner from "@components/spinner";
+import { handleFetch } from "@libs/client/utils";
 import { Watched } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
 import type { NextPage } from "next";
-import useSWR from "swr";
 
 interface WatchedWithIdeasCount extends Watched {
   _count: {
@@ -16,11 +17,13 @@ interface WatchedData {
 }
 
 const Archive: NextPage = () => {
-  const { data: watchedData } = useSWR<WatchedData>("/api/archive");
-  console.log(watchedData);
+  const { isFetching, data: watchedData } = useQuery(["archive"], () =>
+    handleFetch("/api/archive")
+  );
+
   return (
     <Layout title="Archive" hasTabBar>
-      {!watchedData ? (
+      {isFetching ? (
         <Spinner />
       ) : watchedData?.watched && watchedData.watched.length === 0 ? (
         <div>검색 결과가 없습니다.</div>
@@ -32,6 +35,7 @@ const Archive: NextPage = () => {
               className="flex gap-2 border rounded-lg overflow-hidden shadow-md cursor-pointer"
             >
               <SearchedTitle
+                id={title.id}
                 poster_path={title.poster_path}
                 original_name={title.original_name || ""}
                 original_title={title.original_title || ""}

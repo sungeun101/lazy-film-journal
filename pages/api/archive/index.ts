@@ -20,21 +20,42 @@ async function handler(
       },
       session: { user },
     } = req;
-    const watched = await client.watched.create({
-      data: {
+    const alreadyExists = await client.watched.findFirst({
+      where: {
         id,
-        poster_path,
-        original_name,
-        original_title,
-        first_air_date,
-        release_date,
-        overview,
-        user: {
-          connect: { id: user?.id },
-        },
+        userId: user?.id,
+      },
+      select: {
+        id: true,
       },
     });
-    res.json({ ok: true, watched });
+    if (alreadyExists) {
+      const watched = await client.watched.delete({
+        where: {
+          id: alreadyExists.id,
+        },
+      });
+      res.json({
+        ok: true,
+        watched,
+      });
+    } else {
+      const watched = await client.watched.create({
+        data: {
+          id,
+          poster_path,
+          original_name,
+          original_title,
+          first_air_date,
+          release_date,
+          overview,
+          user: {
+            connect: { id: user?.id },
+          },
+        },
+      });
+      res.json({ ok: true, watched });
+    }
   }
   if (req.method === "GET") {
     const {

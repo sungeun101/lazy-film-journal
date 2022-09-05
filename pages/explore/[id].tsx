@@ -1,3 +1,4 @@
+import Spinner from "@components/spinner";
 import useMutation from "@libs/client/useMutation";
 import { Idea } from "@prisma/client";
 import type { NextPage } from "next";
@@ -82,19 +83,21 @@ const VideoItem: NextPage = () => {
           <div>
             <h2 className="text-lg text-gray-900 pt-4 py-2">Comments</h2>
             <main className="pb-16 h-[50vh] overflow-y-scroll px-1 space-y-4">
-              {comments?.items
-                ? comments.items.map(
-                    ({ snippet, id }: CommentInfo, index: number) => (
-                      <div key={id} onClick={handleSubmit(onValid)}>
-                        <Message
-                          message={snippet.topLevelComment.snippet.textOriginal}
-                          reversed={index % 2 == 1}
-                          commentId={id}
-                        />
-                      </div>
-                    )
+              {comments?.items ? (
+                comments.items.map(
+                  ({ snippet, id }: CommentInfo, index: number) => (
+                    <div key={id} onClick={handleSubmit(onValid)}>
+                      <Message
+                        message={snippet.topLevelComment.snippet.textOriginal}
+                        reversed={index % 2 == 1}
+                        commentId={id}
+                      />
+                    </div>
                   )
-                : "loading..."}
+                )
+              ) : (
+                <Spinner />
+              )}
             </main>
 
             {/* my comment */}

@@ -158,6 +158,6 @@ model Watched {
   original_title    String?
   first_air_date    String?
   release_date      String?
-  overview          String
+  overview          String  @db.MediumText
   ideas             Idea[]
 }

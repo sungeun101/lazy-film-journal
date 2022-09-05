@@ -66,30 +66,9 @@ const Explore: NextPage = () => {
     register: searchRegister,
     handleSubmit: handleSearchSubmit,
     getValues,
-    watch,
   } = useForm();
   const { searchWord, movieOrSeries } = getValues();
-  const watchAllFields = watch();
 
-  useEffect(() => {
-    const subscription = watch((value) => {
-      if (value.searchWord === "") {
-        setShowSearchResult(false);
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
-
-  const { isFetching: isFetchingTmdb, data: tmdb } = useQuery(
-    ["archive", watchAllFields],
-    () =>
-      handleFetch(
-        `https://api.themoviedb.org/3/search/${movieOrSeries}?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=${searchWord}&page=1&include_adult=false&language=en`
-      ),
-    {
-      enabled: !!searchWord && !!showSearchResult,
-    }
-  );
   const { data: videos } = useSWR(
     isReviewVideo
       ? `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${searchWord}review&regionCode=us&relevanceLanguage=en&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
@@ -102,21 +81,15 @@ const Explore: NextPage = () => {
     //   :
     null
   );
-
-  const [uploadWatched, { loading, data: watchedData }] =
-    useMutation<MutationResult>("/api/archive");
+  const { data: watched } = useSWR("/api/archive");
+  const { data: tmdb } = useSWR(
+    searchWord && searchWord.length > 2 && watched
+      ? `https://api.themoviedb.org/3/search/${movieOrSeries}?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=${searchWord}&page=1&include_adult=false&language=en`
+      : null
+  );
 
   const onSearchValid = (userInput: any) => {
-    console.log("검색");
-    setShowSearchResult(true);
-  };
-
-  const addToArchive = (title: TitleInfo) => {
-    if (loading) return;
-    uploadWatched({ ...title, isMovie: Boolean(title.release_date) });
-    if (watchedData?.ok) {
-      alert("Saved!");
-    }
+    // setShowSearchResult(true);
   };
 
   // const changeReviewType = () => {
@@ -154,12 +127,9 @@ const Explore: NextPage = () => {
           </button>
         </div> */}
       </form>
-
-      {showSearchResult ? (
+      {tmdb?.results && watched ? (
         <main className="px-4 space-y-5 mt-4 z-0">
-          {isFetchingTmdb ? (
-            <Spinner />
-          ) : tmdb?.results?.length === 0 ? (
+          {tmdb?.results?.length === 0 ? (
             <div className="flex justify-center">
               Nothing Found. Are you sure you are searching for
               <span className="font-bold pl-1 italic">
@@ -180,31 +150,19 @@ const Explore: NextPage = () => {
                   release_date,
                   overview,
                 }: TitleInfo) => (
-                  <div
+                  <SearchedTitle
                     key={id}
-                    onClick={() =>
-                      addToArchive({
-                        id,
-                        poster_path,
-                        original_name,
-                        original_title,
-                        first_air_date,
-                        release_date,
-                        overview,
-                      })
-                    }
-                    className="flex gap-2 border rounded-lg overflow-hidden shadow-md cursor-pointer"
-                  >
-                    <SearchedTitle
-                      id={id}
-                      poster_path={poster_path}
-                      original_name={original_name || ""}
-                      original_title={original_title || ""}
-                      first_air_date={first_air_date || ""}
-                      release_date={release_date || ""}
-                      overview={overview}
-                    />
-                  </div>
+                    id={id}
+                    poster_path={poster_path}
+                    original_name={original_name || ""}
+                    original_title={original_title || ""}
+                    first_air_date={first_air_date || ""}
+                    release_date={release_date || ""}
+                    overview={overview}
+                    isLikedBefore={watched.watched.some(
+                      (item: TitleInfo) => item.id === id
+                    )}
+                  />
                 )
               )
           )}

@@ -65,11 +65,11 @@ async function handler(
       where: {
         userId: user?.id,
       },
-      include: {
-        _count: {
-          select: { ideas: true },
-        },
-      },
+      // include: {
+      //   _count: {
+      //     select: { ideas: true },
+      //   },
+      // },
     });
     res.json({
       ok: true,

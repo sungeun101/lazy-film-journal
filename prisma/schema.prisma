@@ -144,11 +144,11 @@ model Idea {
   bookmarked  Boolean  @default(false)
   commentId   String
   watched     Watched  @relation(fields: [watchedId], references: [id], onDelete: Cascade)
-  watchedId   Int
+  watchedId   String
 }
 
 model Watched {
-  id                Int      @id
+  id                String   @id
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)

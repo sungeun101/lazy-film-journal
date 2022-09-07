@@ -3,6 +3,7 @@ import type { AppProps } from "next/app";
 import { SWRConfig } from "swr";
 import { useRouter } from "next/router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { RecoilRoot } from "recoil";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -27,9 +28,11 @@ function MyApp({ Component, pageProps }: AppProps) {
           },
         }}
       >
-        <div className="w-full max-w-xl mx-auto">
-          <Component {...pageProps} />
-        </div>
+        <RecoilRoot>
+          <div className="w-full max-w-xl mx-auto">
+            <Component {...pageProps} />
+          </div>
+        </RecoilRoot>
       </SWRConfig>
     </QueryClientProvider>
   );

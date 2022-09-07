@@ -14,7 +14,7 @@ async function handler(
     } = req;
     if (body.content) {
       // my idea
-      const { content } = body;
+      const { content, titleId } = body;
       const idea = await client.idea.create({
         data: {
           content,
@@ -22,6 +22,11 @@ async function handler(
           user: {
             connect: {
               id: user?.id,
+            },
+          },
+          watched: {
+            connect: {
+              id: titleId,
             },
           },
         },
@@ -32,7 +37,7 @@ async function handler(
       });
     } else {
       // bookmark
-      const { commentId, message } = body;
+      const { commentId, message, titleId } = body;
       const alreadyExists = await client.idea.findFirst({
         where: {
           commentId,
@@ -61,6 +66,11 @@ async function handler(
             user: {
               connect: {
                 id: user?.id,
+              },
+            },
+            watched: {
+              connect: {
+                id: titleId,
               },
             },
           },

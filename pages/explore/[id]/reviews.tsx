@@ -1,3 +1,4 @@
+import FloatingButton from "@components/floating-button";
 import Spinner from "@components/spinner";
 import useMutation from "@libs/client/useMutation";
 import { Idea } from "@prisma/client";
@@ -6,8 +7,8 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import useSWR, { useSWRConfig } from "swr";
-import Layout from "../../components/layout";
-import Message from "../../components/message";
+import Layout from "../../../components/layout";
+import Message from "../../../components/message";
 
 interface CommentInfo {
   snippet: any;
@@ -57,7 +58,7 @@ const VideoItem: NextPage = () => {
   }, [ideaResult, mutate, reset]);
 
   const onValid = (data: UploadIdeaForm) => {
-    uploadIdeas(data);
+    uploadIdeas({ ...data });
   };
 
   return (
@@ -86,7 +87,7 @@ const VideoItem: NextPage = () => {
               {comments?.items ? (
                 comments.items.map(
                   ({ snippet, id }: CommentInfo, index: number) => (
-                    <div key={id} onClick={handleSubmit(onValid)}>
+                    <div key={id}>
                       <Message
                         message={snippet.topLevelComment.snippet.textOriginal}
                         reversed={index % 2 == 1}
@@ -123,6 +124,23 @@ const VideoItem: NextPage = () => {
           </div>
         </section>
       </div>
+
+      <FloatingButton href="/explore/create">
+        <svg
+          className="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+          />
+        </svg>
+      </FloatingButton>
     </Layout>
   );
 };

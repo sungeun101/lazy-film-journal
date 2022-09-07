@@ -60,36 +60,43 @@ const maxResults = 2;
 
 const Explore: NextPage = () => {
   const [isReviewVideo, setIsReviewVideo] = useState(false);
-  const [showSearchResult, setShowSearchResult] = useState(false);
+  const [showTitles, setShowTitles] = useState(false);
 
   const {
     register: searchRegister,
     handleSubmit: handleSearchSubmit,
     getValues,
+    watch,
   } = useForm();
-  const { searchWord, movieOrSeries } = getValues();
+  const { movieOrSeries } = getValues();
 
   const { data: videos } = useSWR(
-    isReviewVideo
-      ? `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${searchWord}review&regionCode=us&relevanceLanguage=en&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
-      : null
-  );
-  const { data: written } = useSWR(
-    // !isReviewVideo
-    //   ?
-    //   `https://imdb-api.com/en/API/Reviews/${process.env.NEXT_PUBLIC_IMDB_API_KEY}/tt5113044`
+    // isReviewVideo
+    //   ? `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${searchWord}%review&regionCode=us&relevanceLanguage=en&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
     //   :
     null
   );
+  const { data: written } = useSWR(
+    // !isReviewVideo
+    //   ? `https://imdb-api.com/en/API/Reviews/${process.env.NEXT_PUBLIC_IMDB_API_KEY}/tt5113044`
+    //   :
+    null
+  );
+  // console.log("written", written);
   const { data: watched } = useSWR("/api/archive");
+
   const { data: tmdb } = useSWR(
-    searchWord && searchWord.length > 2 && watched
-      ? `https://api.themoviedb.org/3/search/${movieOrSeries}?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=${searchWord}&page=1&include_adult=false&language=en`
+    watch("searchWord") && watch("searchWord").length > 2
+      ? `https://api.themoviedb.org/3/search/${watch(
+          "movieOrSeries"
+        )}?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=${watch(
+          "searchWord"
+        )}&page=1&include_adult=false&language=en`
       : null
   );
-
+  console.log("tmdb", tmdb);
   const onSearchValid = (userInput: any) => {
-    // setShowSearchResult(true);
+    // setShowTitles(true);
   };
 
   // const changeReviewType = () => {
@@ -127,7 +134,7 @@ const Explore: NextPage = () => {
           </button>
         </div> */}
       </form>
-      {tmdb?.results && watched ? (
+      {tmdb?.results ? (
         <main className="px-4 space-y-5 mt-4 z-0">
           {tmdb?.results?.length === 0 ? (
             <div className="flex justify-center">
@@ -159,9 +166,13 @@ const Explore: NextPage = () => {
                     first_air_date={first_air_date || ""}
                     release_date={release_date || ""}
                     overview={overview}
-                    isLikedBefore={watched.watched.some(
-                      (item: TitleInfo) => item.id === id
-                    )}
+                    isLikedBefore={
+                      watched
+                        ? watched.watched.some(
+                            (item: TitleInfo) => item.id === id
+                          )
+                        : false
+                    }
                   />
                 )
               )

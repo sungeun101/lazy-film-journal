@@ -18,7 +18,7 @@ export interface VideoInfo {
   id: { videoId: string };
 }
 export interface TitleInfo {
-  id: number;
+  id: string;
   poster_path: string;
   original_name?: string;
   original_title?: string;

@@ -3,7 +3,6 @@ import SearchedTitle from "@components/searchedTitle";
 import Spinner from "@components/spinner";
 import { Watched } from "@prisma/client";
 import type { NextPage } from "next";
-import { TitleInfo } from "pages/explore";
 import useSWR from "swr";
 
 interface WatchedWithIdeasCount extends Watched {
@@ -17,7 +16,9 @@ export interface WatchedData {
 }
 
 const Archive: NextPage = () => {
-  const { data: watchedData, isValidating } = useSWR("/api/archive");
+  const { data: watchedData, isValidating } =
+    useSWR<WatchedData>("/api/archive");
+  console.log(watchedData);
 
   return (
     <Layout title="Archive" hasTabBar>
@@ -38,7 +39,8 @@ const Archive: NextPage = () => {
               first_air_date,
               release_date,
               overview,
-            }: TitleInfo) => (
+              _count,
+            }: WatchedWithIdeasCount) => (
               <SearchedTitle
                 key={id}
                 id={id}
@@ -49,8 +51,9 @@ const Archive: NextPage = () => {
                 release_date={release_date || ""}
                 overview={overview}
                 isLikedBefore={watchedData.watched.some(
-                  (item: TitleInfo) => item.id === id
+                  (item) => item.id === id
                 )}
+                ideaCount={_count.ideas}
               />
             )
           )}

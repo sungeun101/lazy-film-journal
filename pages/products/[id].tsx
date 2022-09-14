@@ -20,15 +20,16 @@ interface ProductDetailResponse {
 
 const ProductDetail: NextPage = () => {
   const router = useRouter();
+  const {
+    query: { id },
+  } = router;
 
   const { mutate } = useSWRConfig();
   const { data, mutate: boundMutate } = useSWR<ProductDetailResponse>(
-    router.query ? `/api/products/${router.query.id}` : null
+    id ? `/api/products/${id}` : null
   );
 
-  const [toggleFav, { loading }] = useMutation(
-    `/api/products/${router.query.id}/favs`
-  );
+  const [toggleFav, { loading }] = useMutation(`/api/products/${id}/favs`);
 
   const onFavClick = () => {
     if (!data) return;

@@ -18,7 +18,7 @@ export interface VideoInfo {
   id: { videoId: string };
 }
 export interface TitleInfo {
-  id: string;
+  id: number;
   poster_path: string;
   original_name?: string;
   original_title?: string;
@@ -161,10 +161,8 @@ const Explore: NextPage = () => {
                     key={id}
                     id={id}
                     poster_path={poster_path}
-                    original_name={original_name || ""}
-                    original_title={original_title || ""}
-                    first_air_date={first_air_date || ""}
-                    release_date={release_date || ""}
+                    original_title={original_title || original_name || ""}
+                    release_date={release_date || first_air_date || ""}
                     overview={overview}
                     isLikedBefore={
                       watched

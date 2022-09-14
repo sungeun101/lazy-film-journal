@@ -7,7 +7,12 @@ import { useRouter } from "next/router";
 import { cls } from "@libs/client/utils";
 import Link from "next/link";
 
-export interface SearchedTitleProps extends TitleInfo {
+export interface SearchedTitleProps {
+  id: number;
+  poster_path: string;
+  original_title: string;
+  release_date: string;
+  overview: string;
   isLikedBefore: boolean;
   ideaCount?: number;
 }
@@ -15,9 +20,7 @@ export interface SearchedTitleProps extends TitleInfo {
 export default function SearchedTitle({
   id,
   poster_path,
-  original_name,
   original_title,
-  first_air_date,
   release_date,
   overview,
   isLikedBefore,
@@ -27,24 +30,26 @@ export default function SearchedTitle({
 
   const [isLiked, setIsLiked] = useState(isLikedBefore);
 
-  const [uploadWatched, { data: watchedMutated }] =
+  const [postThisTitle, { data: watchedMutated }] =
     useMutation<WatchedData>("/api/archive");
 
+  console.log("watchedMutated", watchedMutated);
   useEffect(() => {
     if (watchedMutated) {
       setIsLiked((prev) => !prev);
     }
   }, [watchedMutated]);
 
-  const addToArchive = (title: TitleInfo) => {
-    uploadWatched({ ...title, isMovie: Boolean(title.release_date) });
+  const handlePostArchive = (title: TitleInfo) => {
+    console.log(title);
+    postThisTitle({ ...title, isMovie: Boolean(title.release_date) });
   };
 
   return (
-    <div className="flex flex-col">
-      {router.pathname === "/archive" && (
+    <div className="flex flex-col relative">
+      {router.pathname === "/archive" && ideaCount && (
         <span className="select-none text-sm">
-          {ideaCount} idea{ideaCount && ideaCount > 1 && "s"}
+          {ideaCount} idea{ideaCount > 1 && "s"}
         </span>
       )}
       <Link
@@ -54,9 +59,7 @@ export default function SearchedTitle({
           query: {
             id,
             poster_path,
-            original_name,
             original_title,
-            first_air_date,
             release_date,
             overview,
             isLikedBefore,
@@ -91,47 +94,10 @@ export default function SearchedTitle({
               </div>
             )}
             <div className="max-w-[80%] p-2 pl-1">
-              <div className="flex justify-between">
-                <h1 className="text-xl font-bold text-gray-900 line-clamp-1">
-                  {original_title || original_name}
-                </h1>
-                <button
-                  onClick={() =>
-                    addToArchive({
-                      id,
-                      poster_path,
-                      original_name,
-                      original_title,
-                      first_air_date,
-                      release_date,
-                      overview,
-                    })
-                  }
-                  className={cls(
-                    isLiked ? "text-orange-500" : "text-slate-300",
-                    "h-full rounded-full hover:text-orange-500"
-                  )}
-                >
-                  <svg
-                    className="w-6 h-6"
-                    fill={isLiked ? "currentColor" : "none"}
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                    />
-                  </svg>
-                </button>
-              </div>
-
-              <h2 className="text-sm text-gray-400 mb-2">
-                {release_date || first_air_date}
-              </h2>
+              <h1 className="text-xl font-bold text-gray-900 line-clamp-1">
+                {original_title}
+              </h1>
+              <h2 className="text-sm text-gray-400 mb-2">{release_date}</h2>
               <span className="text-sm text-gray-800 line-clamp-3">
                 {overview}
               </span>
@@ -139,6 +105,36 @@ export default function SearchedTitle({
           </li>
         </a>
       </Link>
+      <button
+        onClick={() =>
+          handlePostArchive({
+            id,
+            poster_path,
+            original_title,
+            release_date,
+            overview,
+          })
+        }
+        className={cls(
+          isLiked ? "text-orange-500" : "text-slate-300",
+          "rounded-full hover:text-orange-500 absolute right-2.5 top-2.5"
+        )}
+      >
+        <svg
+          className="w-6 h-6"
+          fill={isLiked ? "currentColor" : "none"}
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+          />
+        </svg>
+      </button>
     </div>
   );
 }

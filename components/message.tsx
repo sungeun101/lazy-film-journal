@@ -142,7 +142,7 @@ export default function Message({
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
               Would you like to add this to{" "}
-              <strong>{title?.original_name || title?.original_title}</strong>?
+              <strong>{title?.original_title}</strong>?
             </DialogContentText>
           </DialogContent>
           <DialogActions>

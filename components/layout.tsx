@@ -27,14 +27,19 @@ export default function Layout({
 
   const { data: ideaData, isValidating } = useSWR<IdeaResponse>("/api/ideas");
 
-  const onClick = () => {
+  const onClickGoBack = () => {
     router.back();
   };
+
+  const onClickCart = () => {
+    router.push("/ideas");
+  };
+
   return (
     <div>
       <div className="bg-white w-full h-12 max-w-xl justify-center text-lg px-10 font-medium fixed text-gray-800 top-0  flex items-center">
         {canGoBack ? (
-          <button onClick={onClick} className="absolute left-4">
+          <button onClick={onClickGoBack} className="absolute left-4">
             <svg
               className="w-6 h-6"
               fill="none"
@@ -56,7 +61,7 @@ export default function Layout({
         ) : null}
         {/* idea cart button */}
         {pathname !== "/explore" && (
-          <button className="absolute right-6">
+          <button onClick={onClickCart} className="absolute right-6">
             <svg
               className="w-6 h-6"
               fill="none"

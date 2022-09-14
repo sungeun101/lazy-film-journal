@@ -12,11 +12,10 @@ async function handler(
       body: {
         id,
         poster_path,
-        original_name,
         original_title,
-        first_air_date,
         release_date,
         overview,
+        isMovie,
       },
       session: { user },
     } = req;
@@ -44,11 +43,10 @@ async function handler(
         data: {
           id,
           poster_path,
-          original_name,
           original_title,
-          first_air_date,
           release_date,
           overview,
+          isMovie,
           user: {
             connect: { id: user?.id },
           },

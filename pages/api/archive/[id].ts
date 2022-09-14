@@ -11,7 +11,7 @@ async function handler(
     query: { id },
   } = req;
   const watched = await client.watched.findUnique({
-    where: { id: id?.toString() },
+    where: { id: parseInt(id) },
     select: {
       id: true,
       ideas: {
@@ -20,7 +20,6 @@ async function handler(
           content: true,
         },
       },
-      original_name: true,
       original_title: true,
     },
   });

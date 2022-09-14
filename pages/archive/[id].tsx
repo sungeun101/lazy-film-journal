@@ -23,10 +23,8 @@ const Board: NextPage = () => {
 
   return (
     <>
-      {(data?.watched?.original_name || data?.watched?.original_title) && (
-        <h1>
-          Board for {data.watched.original_name || data.watched.original_title}
-        </h1>
+      {data?.watched?.original_title && (
+        <h1>Board for {data.watched.original_title}</h1>
       )}
       {data?.watched?.ideas && (
         <ul>

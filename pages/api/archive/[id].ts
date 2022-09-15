@@ -11,7 +11,7 @@ async function handler(
     query: { id },
   } = req;
   const watched = await client.watched.findUnique({
-    where: { id: parseInt(id) },
+    where: { id: Number(id) },
     select: {
       id: true,
       ideas: {
@@ -23,10 +23,6 @@ async function handler(
       original_title: true,
     },
   });
-
-  if (!watched)
-    res.status(404).json({ ok: false, error: "Watched Item Not Found" });
-
   res.json({
     ok: true,
     watched,

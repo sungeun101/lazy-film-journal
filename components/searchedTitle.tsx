@@ -47,11 +47,6 @@ export default function SearchedTitle({
 
   return (
     <div className="flex flex-col relative">
-      {router.pathname === "/archive" && ideaCount && (
-        <span className="select-none text-sm">
-          {ideaCount} idea{ideaCount > 1 && "s"}
-        </span>
-      )}
       <Link
         href={{
           pathname:
@@ -94,10 +89,22 @@ export default function SearchedTitle({
               </div>
             )}
             <div className="max-w-[80%] p-2 pl-1">
-              <h1 className="text-xl font-bold text-gray-900 line-clamp-1">
+              <h1 className="text-xl font-bold text-gray-900 line-clamp-1 mr-5">
                 {original_title}
+                ㅇㅎㅁㄴㄹㅎㅁㄴㄹㄴㅇㅁㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㄹㅁㄴㄹㅁㄴㅇㄹㄴㅇㄹㅁㄴㄹㅁㄴㅇㄹㅁㄴㄹ
               </h1>
-              <h2 className="text-sm text-gray-400 mb-2">{release_date}</h2>
+              <div className="mb-2 flex justify-between">
+                <h2 className="text-sm text-gray-400">{release_date}</h2>
+                {router.pathname === "/archive" &&
+                ideaCount &&
+                ideaCount > 0 ? (
+                  <span className="select-none text-sm bg-gray-300 rounded-lg px-2 py-0">
+                    {ideaCount} idea{ideaCount > 1 ? "s" : ""}
+                  </span>
+                ) : (
+                  ""
+                )}
+              </div>
               <span className="text-sm text-gray-800 line-clamp-3">
                 {overview}
               </span>

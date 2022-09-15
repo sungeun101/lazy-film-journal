@@ -16,7 +16,7 @@ async function handler(
       bookmarked: true,
     },
     select: {
-      commentId: true,
+      id: true,
       content: true,
     },
   });

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { TitleInfo } from "pages/explore";
 import useMutation from "@libs/client/useMutation";
 import { WatchedData } from "pages/archive";
 import { useRouter } from "next/router";
@@ -14,6 +13,7 @@ export interface SearchedTitleProps {
   release_date: string;
   overview: string;
   isLikedBefore: boolean;
+  isMovie: boolean;
   ideaCount?: number;
 }
 
@@ -24,6 +24,7 @@ export default function SearchedTitle({
   release_date,
   overview,
   isLikedBefore,
+  isMovie,
   ideaCount,
 }: SearchedTitleProps) {
   const router = useRouter();
@@ -33,16 +34,21 @@ export default function SearchedTitle({
   const [postThisTitle, { data: watchedMutated }] =
     useMutation<WatchedData>("/api/archive");
 
-  console.log("watchedMutated", watchedMutated);
   useEffect(() => {
-    if (watchedMutated) {
+    if (watchedMutated?.ok) {
       setIsLiked((prev) => !prev);
     }
   }, [watchedMutated]);
 
-  const handlePostArchive = (title: TitleInfo) => {
-    console.log(title);
-    postThisTitle({ ...title, isMovie: Boolean(title.release_date) });
+  const onClickHeart = () => {
+    postThisTitle({
+      id,
+      poster_path,
+      original_title,
+      release_date,
+      overview,
+      isMovie,
+    });
   };
 
   return (
@@ -57,6 +63,7 @@ export default function SearchedTitle({
             original_title,
             release_date,
             overview,
+            isMovie: Boolean(release_date),
             isLikedBefore,
           },
         }}
@@ -91,14 +98,13 @@ export default function SearchedTitle({
             <div className="max-w-[80%] p-2 pl-1">
               <h1 className="text-xl font-bold text-gray-900 line-clamp-1 mr-5">
                 {original_title}
-                ㅇㅎㅁㄴㄹㅎㅁㄴㄹㄴㅇㅁㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㄹㅁㄴㄹㅁㄴㅇㄹㄴㅇㄹㅁㄴㄹㅁㄴㅇㄹㅁㄴㄹ
               </h1>
               <div className="mb-2 flex justify-between">
                 <h2 className="text-sm text-gray-400">{release_date}</h2>
                 {router.pathname === "/archive" &&
                 ideaCount &&
                 ideaCount > 0 ? (
-                  <span className="select-none text-sm bg-gray-300 rounded-lg px-2 py-0">
+                  <span className="select-none text-sm bg-gray-200 rounded-lg px-2 py-0">
                     {ideaCount} idea{ideaCount > 1 ? "s" : ""}
                   </span>
                 ) : (
@@ -113,15 +119,7 @@ export default function SearchedTitle({
         </a>
       </Link>
       <button
-        onClick={() =>
-          handlePostArchive({
-            id,
-            poster_path,
-            original_title,
-            release_date,
-            overview,
-          })
-        }
+        onClick={onClickHeart}
         className={cls(
           isLiked ? "text-orange-500" : "text-slate-300",
           "rounded-full hover:text-orange-500 absolute right-2.5 top-2.5"

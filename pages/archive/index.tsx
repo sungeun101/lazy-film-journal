@@ -18,7 +18,6 @@ export interface WatchedData {
 const Archive: NextPage = () => {
   const { data: watchedData, isValidating } =
     useSWR<WatchedData>("/api/archive");
-  console.log("watchedData", watchedData);
 
   return (
     <Layout title="Archive" hasTabBar>
@@ -49,6 +48,7 @@ const Archive: NextPage = () => {
                 isLikedBefore={watchedData.watched.some(
                   (item) => item.id === id
                 )}
+                isMovie={Boolean(release_date)}
                 ideaCount={_count.ideas}
               />
             )

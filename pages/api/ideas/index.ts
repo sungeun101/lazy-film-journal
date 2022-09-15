@@ -18,7 +18,6 @@ async function handler(
       const idea = await client.idea.create({
         data: {
           content,
-          commentId: "",
           user: {
             connect: {
               id: user?.id,
@@ -26,7 +25,7 @@ async function handler(
           },
           watched: {
             connect: {
-              id: titleId,
+              id: Number(titleId),
             },
           },
         },
@@ -38,9 +37,10 @@ async function handler(
     } else {
       // bookmark
       const { commentId, message, titleId } = body;
+
       const alreadyExists = await client.idea.findFirst({
         where: {
-          commentId,
+          id: commentId,
           userId: user?.id,
         },
         select: {
@@ -61,7 +61,7 @@ async function handler(
         const idea = await client.idea.create({
           data: {
             bookmarked: true,
-            commentId,
+            id: commentId,
             content: message,
             user: {
               connect: {
@@ -70,7 +70,7 @@ async function handler(
             },
             watched: {
               connect: {
-                id: titleId,
+                id: Number(titleId),
               },
             },
           },

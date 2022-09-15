@@ -4,7 +4,7 @@ import useMutation from "@libs/client/useMutation";
 import { Idea } from "@prisma/client";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWR, { useSWRConfig } from "swr";
 import Layout from "../../../components/layout";
@@ -17,7 +17,6 @@ interface CommentInfo {
 interface UploadIdeaForm {
   content: string;
 }
-
 interface MutationResult {
   ok: boolean;
   idea: Idea;
@@ -58,7 +57,11 @@ const VideoItem: NextPage = () => {
   }, [ideaResult, mutate, reset]);
 
   const onValid = (data: UploadIdeaForm) => {
-    uploadIdeas({ ...data });
+    const title = sessionStorage.getItem("title");
+    if (title) {
+      const parsedTitle = JSON.parse(title);
+      uploadIdeas({ ...data, titleId: parsedTitle.id });
+    }
   };
 
   return (

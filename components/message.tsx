@@ -32,58 +32,58 @@ export default function Message({
   reversed,
   commentId,
 }: MessageProps) {
-  const [title, setTitle] = useState<SearchedTitleProps>();
+  const [title, setTitle] = useState<SearchedTitleProps | null>(null);
   const [openModal, setOpenModal] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
 
-  useEffect(() => {
-    if (openModal) {
-      onClickBookmark();
-    }
-  }, [openModal]);
-
   const { mutate } = useSWRConfig();
-
-  const [bookmark, { data: bookmarkResult, loading }] =
-    useMutation<MutationResult>("/api/ideas");
 
   const [uploadWatched, { data: watchedMutated }] =
     useMutation<WatchedData>("/api/archive");
-  const { data: bookmarkedIdeas } = useSWR(`/api/ideas/bookmark`);
-  // console.log(bookmarkedIdeas);
-  useEffect(() => {
-    if (title && watchedMutated && watchedMutated.ok) {
-      bookmark({
-        commentId,
-        message,
-        titleId: title.id,
-      });
-      setIsBookmarked((prev) => !prev);
-    }
-  }, [watchedMutated, title]);
+  const [bookmark, { data: bookmarkResult, loading }] =
+    useMutation<MutationResult>("/api/ideas");
 
-  useEffect(() => {
-    if (bookmarkResult && bookmarkResult.ok) {
-      mutate("/api/ideas");
-    }
-  }, [bookmarkResult, mutate]);
+  const { data: watchedItem } = useSWR<WatchedData>(
+    title?.id ? `/api/archive/${title.id}` : null
+  );
+  const { data: bookmarkedIdeas } = useSWR(`/api/ideas/bookmark`);
 
   useEffect(() => {
     // const bookmarkedIdea = ideas.ideas.filter(
     //   (idea: any) => idea.commentId === commentId
     // );
-    if (bookmarkedIdeas && bookmarkedIdeas.ok) {
+    if (bookmarkedIdeas?.ok) {
       const isBookmarkedComment = bookmarkedIdeas.data.some(
-        (idea: any) => idea.commentId === commentId
+        (idea: any) => idea.id === commentId
       );
-      // console.log(isBookmarkedComment);
       if (isBookmarkedComment) setIsBookmarked(true);
     }
-  }, [commentId, bookmarkedIdeas]);
-  console.log("bookmarkedIdeas", bookmarkedIdeas);
+  }, [bookmarkedIdeas, commentId]);
+
+  useEffect(() => {
+    if (title) {
+      setOpenModal(true);
+    }
+  }, [title]);
+
+  useEffect(() => {
+    if (watchedMutated?.ok) {
+      bookmark({
+        commentId,
+        message,
+        titleId: title!.id,
+      });
+    }
+  }, [watchedMutated]);
+
+  useEffect(() => {
+    if (bookmarkResult?.ok) {
+      setIsBookmarked((prev) => !prev);
+      mutate("/api/ideas");
+    }
+  }, [bookmarkResult, mutate]);
 
   const onClickBookmark = () => {
-    if (loading) return;
     const title = sessionStorage.getItem("title");
     if (title) {
       const parsedTitle = JSON.parse(title);
@@ -93,7 +93,20 @@ export default function Message({
 
   const onClickModalYes = () => {
     setOpenModal(false);
-    uploadWatched(title);
+    if (!watchedItem?.watched) {
+      uploadWatched(title);
+    } else {
+      bookmark({
+        commentId,
+        message,
+        titleId: title!.id,
+      });
+    }
+  };
+
+  const onClickModalNo = () => {
+    setOpenModal(false);
+    setTitle(null);
   };
 
   return (
@@ -109,7 +122,7 @@ export default function Message({
       </div>
       <div>
         <button
-          onClick={() => setOpenModal(true)}
+          onClick={onClickBookmark}
           className={cls(
             isBookmarked ? "text-orange-500" : "text-slate-300",
             "flex items-center rounded-full hover:text-orange-500 "
@@ -132,21 +145,18 @@ export default function Message({
         </button>
         <Dialog
           open={openModal}
-          // onClose={handleClose}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          {/* <DialogTitle id="alert-dialog-title">
-              {"Use Google's location service?"}
-            </DialogTitle> */}
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-              Would you like to add this to{" "}
+              Would you like to
+              {isBookmarked ? " remove this from " : " add this to "}
               <strong>{title?.original_title}</strong>?
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpenModal(false)}>No</Button>
+            <Button onClick={onClickModalNo}>No</Button>
             <Button onClick={onClickModalYes} autoFocus>
               Yes
             </Button>

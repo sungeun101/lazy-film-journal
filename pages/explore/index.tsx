@@ -171,6 +171,7 @@ const Explore: NextPage = () => {
                           )
                         : false
                     }
+                    isMovie={Boolean(release_date)}
                   />
                 )
               )

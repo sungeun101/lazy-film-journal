@@ -48,14 +48,9 @@ const VideosFromSearchedTitle: NextPage = () => {
 
   const { data: videos } = useSWR(
     router.query
-      ? `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${
-          query.original_name || query.original_title
-        }%review&regionCode=us&relevanceLanguage=en&key=${
-          process.env.NEXT_PUBLIC_YOUTUBE_API_KEY
-        }`
+      ? `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${query.original_title}%review&regionCode=us&relevanceLanguage=en&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
       : null
   );
-  console.log("videos", videos);
 
   const { data: tmdb } = useSWR(
     // searchWord && searchWord.length > 2 && watched
@@ -73,13 +68,7 @@ const VideosFromSearchedTitle: NextPage = () => {
   // };
 
   return (
-    <Layout
-      hasTabBar
-      canGoBack
-      title={
-        query.original_name?.toString() || query.original_title?.toString()
-      }
-    >
+    <Layout hasTabBar canGoBack title={query.original_title?.toString()}>
       {/* <form
         onSubmit={handleSearchSubmit(onSearchValid)}
         className="fixed inset-x-0 top-2 w-full max-w-md mx-auto flex z-10"

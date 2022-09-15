@@ -21,7 +21,7 @@ async function handler(
     } = req;
     const alreadyExists = await client.watched.findFirst({
       where: {
-        id,
+        id: Number(id),
         userId: user?.id,
       },
       select: {
@@ -41,12 +41,12 @@ async function handler(
     } else {
       const watched = await client.watched.create({
         data: {
-          id,
+          id: Number(id),
           poster_path,
           original_title,
           release_date,
           overview,
-          isMovie,
+          isMovie: Boolean(isMovie),
           user: {
             connect: { id: user?.id },
           },

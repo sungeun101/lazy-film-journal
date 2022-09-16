@@ -3,7 +3,7 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React from "react";
 import useSWR from "swr";
-
+import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 interface WatchedWithIdeas extends Watched {
   ideas: Idea[];
 }
@@ -21,19 +21,44 @@ const Board: NextPage = () => {
   const { data } = useSWR<WatchedData>(id ? `/api/archive/${id}` : null);
   console.log(data);
 
+  const onDragEnd = (d: any) => {
+    console.log(d);
+  };
   return (
-    <>
-      {data?.watched?.original_title && (
-        <h1>Board for {data.watched.original_title}</h1>
-      )}
-      {data?.watched?.ideas && (
-        <ul>
-          {data.watched.ideas.map((item: Idea) => (
-            <li key={item.id}>{item.content}</li>
-          ))}
-        </ul>
-      )}
-    </>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <div>
+        {data?.watched?.original_title && (
+          <h1 className="p-3">Board for {data.watched.original_title}</h1>
+        )}
+        <main className="px-2 py-4 bg-gray-100">
+          <Droppable droppableId="one">
+            {(magic: any) => (
+              <ul
+                ref={magic.innerRef}
+                {...magic.droppableProps}
+                className="flex flex-col gap-3"
+              >
+                {data?.watched?.ideas.map((idea: Idea, index: number) => (
+                  <Draggable draggableId={idea.id} index={index} key={idea.id}>
+                    {(magic: any) => (
+                      <li
+                        ref={magic.innerRef}
+                        {...magic.dragHandleProps}
+                        {...magic.draggableProps}
+                        className="bg-white p-2 rounded-lg"
+                      >
+                        {idea.content}
+                      </li>
+                    )}
+                  </Draggable>
+                ))}
+                {magic.placeholder}
+              </ul>
+            )}
+          </Droppable>
+        </main>
+      </div>
+    </DragDropContext>
   );
 };
 

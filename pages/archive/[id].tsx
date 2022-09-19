@@ -1,9 +1,14 @@
 import { Idea, Watched } from "@prisma/client";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import useSWR from "swr";
-import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  DropResult,
+} from "@hello-pangea/dnd";
 interface WatchedWithIdeas extends Watched {
   ideas: Idea[];
 }
@@ -19,11 +24,31 @@ const Board: NextPage = () => {
   } = router;
 
   const { data } = useSWR<WatchedData>(id ? `/api/archive/${id}` : null);
-  console.log(data);
 
-  const onDragEnd = (d: any) => {
-    console.log(d);
+  const [ideas, setIdeas] = useState<Idea[]>([]);
+
+  useEffect(() => {
+    if (data?.watched.ideas) {
+      setIdeas(data.watched.ideas);
+    }
+  }, [data?.watched.ideas]);
+
+  const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
+    const parsedId = JSON.parse(draggableId);
+    console.log(parsedId);
+    const { content, id } = parsedId;
+    if (!destination) return;
+    setIdeas((prev: any) => {
+      const ideasCopy = [...prev];
+      ideasCopy.splice(source.index, 1);
+      ideasCopy.splice(destination.index, 0, {
+        content,
+        id,
+      });
+      return ideasCopy;
+    });
   };
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div>
@@ -38,8 +63,12 @@ const Board: NextPage = () => {
                 {...magic.droppableProps}
                 className="flex flex-col gap-3"
               >
-                {data?.watched?.ideas.map((idea: Idea, index: number) => (
-                  <Draggable draggableId={idea.id} index={index} key={idea.id}>
+                {ideas.map((idea: Idea, index: number) => (
+                  <Draggable
+                    draggableId={JSON.stringify(idea)}
+                    index={index}
+                    key={JSON.stringify(idea)}
+                  >
                     {(magic: any) => (
                       <li
                         ref={magic.innerRef}

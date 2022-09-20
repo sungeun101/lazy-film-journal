@@ -9,6 +9,7 @@ import {
   Droppable,
   DropResult,
 } from "@hello-pangea/dnd";
+import DraggableItem from "@components/draggableItem";
 interface WatchedWithIdeas extends Watched {
   ideas: Idea[];
 }
@@ -34,17 +35,12 @@ const Board: NextPage = () => {
   }, [data?.watched.ideas]);
 
   const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
-    const parsedId = JSON.parse(draggableId);
-    console.log(parsedId);
-    const { content, id } = parsedId;
+    const parsedIdea = JSON.parse(draggableId);
     if (!destination) return;
     setIdeas((prev: any) => {
       const ideasCopy = [...prev];
       ideasCopy.splice(source.index, 1);
-      ideasCopy.splice(destination.index, 0, {
-        content,
-        id,
-      });
+      ideasCopy.splice(destination.index, 0, parsedIdea);
       return ideasCopy;
     });
   };
@@ -64,22 +60,7 @@ const Board: NextPage = () => {
                 className="flex flex-col gap-3"
               >
                 {ideas.map((idea: Idea, index: number) => (
-                  <Draggable
-                    draggableId={JSON.stringify(idea)}
-                    index={index}
-                    key={JSON.stringify(idea)}
-                  >
-                    {(magic: any) => (
-                      <li
-                        ref={magic.innerRef}
-                        {...magic.dragHandleProps}
-                        {...magic.draggableProps}
-                        className="bg-white p-2 rounded-lg"
-                      >
-                        {idea.content}
-                      </li>
-                    )}
-                  </Draggable>
+                  <DraggableItem key={idea.id} idea={idea} index={index} />
                 ))}
                 {magic.placeholder}
               </ul>

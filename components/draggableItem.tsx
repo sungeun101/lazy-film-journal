@@ -1,20 +1,14 @@
 import { Draggable } from "@hello-pangea/dnd";
-import { Idea } from "@prisma/client";
 import React from "react";
 
 interface DraggableItemProps {
-  idea: Idea;
+  idea: string;
   index: number;
 }
 
 function DraggableItem({ idea, index }: DraggableItemProps) {
-  console.log(idea.content, "has been rendered");
   return (
-    <Draggable
-      draggableId={JSON.stringify(idea)}
-      index={index}
-      key={JSON.stringify(idea)}
-    >
+    <Draggable draggableId={idea} index={index}>
       {(magic: any) => (
         <li
           ref={magic.innerRef}
@@ -22,7 +16,7 @@ function DraggableItem({ idea, index }: DraggableItemProps) {
           {...magic.draggableProps}
           className="bg-white p-2 rounded-lg"
         >
-          {idea.content}
+          {idea}
         </li>
       )}
     </Draggable>

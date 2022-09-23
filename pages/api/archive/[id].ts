@@ -10,6 +10,7 @@ async function handler(
   const {
     query: { id },
   } = req;
+  // get saved titles
   const watched = await client.watched.findUnique({
     where: { id: Number(id) },
     select: {
@@ -27,11 +28,13 @@ async function handler(
     ok: true,
     watched,
   });
+
+  // create board with ideas under this title
 }
 
 export default withApiSession(
   withHandler({
-    methods: ["GET"],
+    methods: ["GET", "POST"],
     handler,
   })
 );

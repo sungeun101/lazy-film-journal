@@ -46,7 +46,7 @@ export default function Message({
   const { data: watchedItem } = useSWR<WatchedData>(
     title?.id ? `/api/archive/${title.id}` : null
   );
-  const { data: bookmarkedIdeas } = useSWR(`/api/ideas/bookmark`);
+  const { data: bookmarkedIdeas } = useSWR(`/api/ideas/bookmarked`);
 
   useEffect(() => {
     // const bookmarkedIdea = ideas.ideas.filter(

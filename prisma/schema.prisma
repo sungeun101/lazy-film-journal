@@ -32,6 +32,7 @@ model User {
   purchases       Purchase[]
   ideas           Idea[]
   watched         Watched[]
+  boards          Board[]
 }
 
 model Token {
@@ -144,20 +145,7 @@ model Idea {
   bookmarked  Boolean  @default(false)
   watched     Watched  @relation(fields: [watchedId], references: [id], onDelete: Cascade)
   watchedId   Int
-  // board       Board?  @relation(fields: [boardId], references: [id], onDelete: Cascade)
-  // boardId     Int?
-  // mainId      String?
-  // main        Idea?   @relation("MainOrSub", fields: [mainId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  // subIdeas     SubIdea[]
 }
-// model SubIdea {
-//   id          String   @id @default(uuid())
-//   createdAt   DateTime @default(now())
-//   updatedAt   DateTime @updatedAt
-//   content     String   @db.MediumText
-//   mainIdea    Idea     @relation(fields: [mainId], references: [id], onDelete: Cascade)
-//   mainId      String
-// }
 
 model Watched {
   id                Int      @id
@@ -171,11 +159,16 @@ model Watched {
   release_date      String
   overview          String   @db.MediumText
   ideas             Idea[]
+  board             Board?
 }
 
-// model Board {
-//   id        Int       @id @default(autoincrement())
-//   createdAt DateTime  @default(now())
-//   updatedAt DateTime  @updatedAt
-//   ideas     Idea[]
-// }
+model Board {
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  lists       Json      @db.Json
+  watched     Watched   @relation(fields: [watchedId], references: [id], onDelete: Cascade)
+  watchedId   Int       @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int       @unique
+}

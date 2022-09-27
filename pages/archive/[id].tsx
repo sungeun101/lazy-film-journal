@@ -13,9 +13,6 @@ interface WatchedData {
   ok: boolean;
   watched: WatchedWithIdeas;
 }
-interface IdeasState {
-  [key: string]: string[];
-}
 
 const Board: NextPage = () => {
   const router = useRouter();
@@ -23,70 +20,47 @@ const Board: NextPage = () => {
     query: { id },
   } = router;
 
-  const { data } = useSWR<WatchedData>(id ? `/api/archive/${id}` : null);
+  const { data: boardData } = useSWR(id ? `/api/archive/${id}/board` : null);
+  const { data: watchedData } = useSWR<WatchedData>(
+    id ? `/api/archive/${id}` : null
+  );
 
   const [lists, setLists] = useState<any>([]);
 
-  const [connectIdeas, { data: connectResult }] =
-    useMutation("/api/ideas/connect");
-
-  // useEffect(() => {
-  //   if (connectResult) {
-  //     console.log(connectResult);
-  //   }
-  // }, [connectResult]);
+  const [postBoard, { data: postResult }] = useMutation(
+    `/api/archive/${id}/board`
+  );
 
   useEffect(() => {
-    if (data?.watched.ideas) {
-      setLists([
-        [
-          {
-            id: "UgwM_GdjpP_wDCu3XjN4AaABAg",
-            content:
-              '"The kids are gonna have a great time."\n\nLittle did he know that 80% of the audience would be teenagers dressed formally',
-          },
-          {
-            id: "sample id",
-            content: "sample content",
-          },
-        ],
-        [
-          {
-            id: "Ugzff9IYC33X57Lrgf54AaABAg",
-            content:
-              "Minions: Rise of Gru is truly one of the movies ever. The script is written, the plot is there, and the characters are acted. I even shed a tear when Gru said \"I'm gonna gruin this man's whole career.\" One of my movies of all time",
-          },
-        ],
-        [
-          {
-            id: "UgztSGF-9Dep5BdgSzV4AaABAg",
-            content: "who is your favorite minion",
-          },
-        ],
-      ]);
+    if (postResult) {
+      console.log(postResult);
     }
-  }, [data]);
+  }, [postResult]);
 
   useEffect(() => {
-    console.log("lists", lists);
-    console.log(
-      "Object.values(lists)",
-      Object.values(lists).filter((list: any) => list.length !== 0)
-    );
-  }, [lists]);
+    if (boardData && watchedData) {
+      if (boardData.board?.lists) {
+        setLists(boardData.board.lists);
+      } else {
+        setLists([watchedData.watched.ideas]);
+      }
+    }
+  }, [boardData, watchedData]);
 
-  const onDragEnd = ({ draggableId, destination, source }: DropResult) => {
+  const onDragEnd = ({ destination, source }: DropResult) => {
     if (!destination) return;
-    if (destination?.droppableId === source.droppableId) {
+    if (destination.droppableId === source.droppableId) {
       // same board movement
       setLists((prev: any) => {
         const sourceList = [...prev[source.droppableId]];
+        sourceList;
         const [removed] = sourceList.splice(source.index, 1);
         sourceList.splice(destination.index, 0, removed);
-        return {
+        const result = {
           ...prev,
           [source.droppableId]: sourceList,
         };
+        return Object.values(result).filter((list: any) => list.length !== 0);
       });
     }
     if (destination.droppableId !== source.droppableId) {
@@ -95,25 +69,28 @@ const Board: NextPage = () => {
         const sourceList = [...prev[source.droppableId]];
         const destinationList = [...prev[destination.droppableId]];
         const [removed] = sourceList.splice(source.index, 1);
-        destinationList.splice(destination.index, 0, removed);
-        return {
+        destinationList.splice(destination?.index, 0, removed);
+        const result = {
           ...prev,
           [source.droppableId]: sourceList,
           [destination.droppableId]: destinationList,
         };
+        return Object.values(result).filter((list: any) => list.length !== 0);
       });
     }
   };
 
-  const onClickSave = () => {};
+  const onClickSave = () => {
+    postBoard({ lists });
+  };
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="h-screen overflow-auto">
         <nav className="flex justify-between items-center">
-          {data?.watched?.original_title && (
+          {watchedData?.watched?.original_title && (
             <h1 className="p-3 cursor-pointer">
-              {data.watched.original_title}
+              {watchedData.watched.original_title}
             </h1>
           )}
           <button
@@ -124,11 +101,9 @@ const Board: NextPage = () => {
           </button>
         </nav>
         <main className="flex gap-2 mx-2">
-          {Object.values(lists)
-            .filter((list: any) => list.length !== 0)
-            .map((list: any, index: number) => (
-              <DraggableList key={index} list={list} index={index} />
-            ))}
+          {lists.map((list: any, index: number) => (
+            <DraggableList key={index} list={list} index={index} />
+          ))}
         </main>
       </div>
     </DragDropContext>

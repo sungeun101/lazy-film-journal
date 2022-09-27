@@ -7,18 +7,19 @@ interface DraggableListProps {
   list: string[];
 }
 
-function DraggableList({ list }: DraggableListProps) {
+function DraggableList({ list, index }: any) {
+  console.log("아이들 ", index, list);
   return (
     <section className="px-2 py-4 bg-gray-100">
-      <Droppable droppableId={list[0]}>
+      <Droppable droppableId={index.toString()}>
         {(magic: any) => (
           <ul
             ref={magic.innerRef}
             {...magic.droppableProps}
             className="flex flex-col gap-3"
           >
-            {list.map((idea: any, index: any) => (
-              <DraggableItem key={idea} idea={idea} index={index} />
+            {list.map((idea: { id: string; content: string }, index: any) => (
+              <DraggableItem key={idea.id} idea={idea} index={index} />
             ))}
             {magic.placeholder}
           </ul>

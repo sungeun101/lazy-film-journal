@@ -19,7 +19,11 @@ interface IForm {
   text: string;
 }
 
-function DraggableList({ list, index, setLists }: DraggableListProps) {
+function DraggableList({
+  list,
+  index: listIndex,
+  setLists,
+}: DraggableListProps) {
   const [openModal, setOpenModal] = useState(false);
 
   const { register, handleSubmit, reset } = useForm<IForm>();
@@ -32,7 +36,7 @@ function DraggableList({ list, index, setLists }: DraggableListProps) {
     setLists((prev: any) => {
       const result = {
         ...prev,
-        [index]: [...prev[index], newIdea],
+        [listIndex]: [...prev[listIndex], newIdea],
       };
       return Object.values(result);
     });
@@ -43,7 +47,7 @@ function DraggableList({ list, index, setLists }: DraggableListProps) {
     setOpenModal(false);
     setLists((prev: any) => {
       const lists = [...prev];
-      lists.splice(index, 1);
+      lists.splice(listIndex, 1);
       return Object.values(lists);
     });
   };
@@ -91,7 +95,7 @@ function DraggableList({ list, index, setLists }: DraggableListProps) {
           </Button>
         </DialogActions>
       </Dialog>
-      <Droppable droppableId={index.toString()}>
+      <Droppable droppableId={listIndex.toString()}>
         {(magic: any) => (
           <ul
             ref={magic.innerRef}
@@ -100,7 +104,13 @@ function DraggableList({ list, index, setLists }: DraggableListProps) {
           >
             {list &&
               list.map((idea: { id: string; content: string }, index: any) => (
-                <DraggableItem key={idea.id} idea={idea} index={index} />
+                <DraggableItem
+                  key={idea.id}
+                  idea={idea}
+                  index={index}
+                  setLists={setLists}
+                  listIndex={listIndex}
+                />
               ))}
             {magic.placeholder}
           </ul>

@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import DraggableList from "@components/draggableList";
 import useMutation from "@libs/client/useMutation";
+import { CircularProgress } from "@mui/material";
 interface WatchedWithIdeas extends Watched {
   ideas: Idea[];
 }
@@ -27,7 +28,7 @@ const Board: NextPage = () => {
 
   const [lists, setLists] = useState<any>([]);
 
-  const [postBoard, { data: postResult }] = useMutation(
+  const [postBoard, { data: postResult, loading }] = useMutation(
     `/api/archive/${id}/board`
   );
 
@@ -81,13 +82,14 @@ const Board: NextPage = () => {
   };
 
   const onClickSave = () => {
+    if (loading) return;
     postBoard({ lists });
   };
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="h-screen overflow-auto">
-        <nav className="flex justify-between items-center">
+        <nav className="flex justify-between items-center px-1">
           {watchedData?.watched?.original_title && (
             <h1 className="p-3 cursor-pointer">
               {watchedData.watched.original_title}
@@ -95,9 +97,19 @@ const Board: NextPage = () => {
           )}
           <button
             onClick={onClickSave}
-            className="bg-orange-500 hover:bg-orange-600 text-white border border-transparent rounded-md shadow-sm font-medium focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:outline-none text-sm px-2 h-8"
+            className="bg-orange-500 hover:bg-orange-600 text-white border border-transparent rounded-md shadow-sm font-medium focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:outline-none text-sm px-2 h-8 w-14 flex justify-center items-center"
           >
-            Save
+            {loading ? (
+              <CircularProgress
+                style={{
+                  width: "15px",
+                  height: "15px",
+                  color: "white",
+                }}
+              />
+            ) : (
+              "Save"
+            )}
           </button>
         </nav>
         <main className="flex gap-2 mx-2">

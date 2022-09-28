@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Droppable } from "@hello-pangea/dnd";
 import DraggableItem from "./draggableItem";
 import { useForm } from "react-hook-form";
-
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  Button,
+} from "@mui/material";
 interface DraggableListProps {
   list: { id: string; content: string }[];
   index: number;
@@ -14,6 +20,8 @@ interface IForm {
 }
 
 function DraggableList({ list, index, setLists }: DraggableListProps) {
+  const [openModal, setOpenModal] = useState(false);
+
   const { register, handleSubmit, reset } = useForm<IForm>();
 
   const onValid = ({ text }: IForm) => {
@@ -31,8 +39,58 @@ function DraggableList({ list, index, setLists }: DraggableListProps) {
     reset();
   };
 
+  const onClickModalYes = () => {
+    setOpenModal(false);
+    setLists((prev: any) => {
+      const lists = [...prev];
+      lists.splice(index, 1);
+      return Object.values(lists);
+    });
+  };
+
+  const onClickModalNo = () => {
+    setOpenModal(false);
+  };
+
   return (
-    <section className="px-2 py-4 bg-gray-100 min-w-[175px]">
+    <section className="px-2 pb-4 bg-gray-100 min-w-[175px]">
+      <button
+        type="button"
+        onClick={() => setOpenModal(true)}
+        className=" text-gray-400 p-2 w-full grid hover:text-gray-800"
+      >
+        <svg
+          className="w-4 h-4 justify-self-end"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+      <Dialog
+        open={openModal}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Would you like to delete this column?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClickModalNo}>No</Button>
+          <Button onClick={onClickModalYes} autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Droppable droppableId={index.toString()}>
         {(magic: any) => (
           <ul

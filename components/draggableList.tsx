@@ -32,7 +32,7 @@ function DraggableList({ list, index, setLists }: DraggableListProps) {
   };
 
   return (
-    <section className="px-2 py-4 bg-gray-100">
+    <section className="px-2 py-4 bg-gray-100 min-w-[175px]">
       <Droppable droppableId={index.toString()}>
         {(magic: any) => (
           <ul
@@ -53,7 +53,7 @@ function DraggableList({ list, index, setLists }: DraggableListProps) {
           {...register("text", { required: true })}
           type="text"
           placeholder={`Add your thoughts...`}
-          className="appearance-none w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500"
+          className="appearance-none w-full px-3 py-1 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-sm"
         />
       </form>
     </section>

@@ -102,7 +102,12 @@ const Board: NextPage = () => {
         </nav>
         <main className="flex gap-2 mx-2">
           {lists.map((list: any, index: number) => (
-            <DraggableList key={index} list={list} index={index} />
+            <DraggableList
+              key={index}
+              list={list}
+              index={index}
+              setLists={setLists}
+            />
           ))}
         </main>
       </div>

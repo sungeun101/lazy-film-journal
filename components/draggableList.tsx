@@ -1,14 +1,36 @@
 import React from "react";
 import { Droppable } from "@hello-pangea/dnd";
-import { Idea } from "@prisma/client";
 import DraggableItem from "./draggableItem";
+import { useForm } from "react-hook-form";
 
 interface DraggableListProps {
   list: { id: string; content: string }[];
   index: number;
+  setLists: React.Dispatch<any>;
 }
 
-function DraggableList({ list, index }: DraggableListProps) {
+interface IForm {
+  text: string;
+}
+
+function DraggableList({ list, index, setLists }: DraggableListProps) {
+  const { register, handleSubmit, reset } = useForm<IForm>();
+
+  const onValid = ({ text }: IForm) => {
+    const newIdea = {
+      id: Date.now().toString(),
+      content: text,
+    };
+    setLists((prev: any) => {
+      const result = {
+        ...prev,
+        [index]: [...prev[index], newIdea],
+      };
+      return Object.values(result);
+    });
+    reset();
+  };
+
   return (
     <section className="px-2 py-4 bg-gray-100">
       <Droppable droppableId={index.toString()}>
@@ -26,6 +48,14 @@ function DraggableList({ list, index }: DraggableListProps) {
           </ul>
         )}
       </Droppable>
+      <form onSubmit={handleSubmit(onValid)}>
+        <input
+          {...register("text", { required: true })}
+          type="text"
+          placeholder={`Add your thoughts...`}
+          className="appearance-none w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500"
+        />
+      </form>
     </section>
   );
 }

@@ -29,24 +29,23 @@ async function handler(
         ok: true,
         board,
       });
-    } else {
-      const board = await client.board.create({
-        data: {
-          lists,
-          user: {
-            connect: {
-              id: user?.id,
-            },
-          },
-          watched: {
-            connect: {
-              id: Number(id),
-            },
+    }
+    const board = await client.board.create({
+      data: {
+        lists,
+        user: {
+          connect: {
+            id: user?.id,
           },
         },
-      });
-      res.json({ ok: true, board });
-    }
+        watched: {
+          connect: {
+            id: Number(id),
+          },
+        },
+      },
+    });
+    res.json({ ok: true, board });
   } else if (req.method === "GET") {
     const {
       query: { id },

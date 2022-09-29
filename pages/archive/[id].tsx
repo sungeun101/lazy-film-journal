@@ -82,7 +82,7 @@ const Board: NextPage = () => {
   };
 
   const onClickSave = () => {
-    if (loading) return;
+    if (loading || lists[0].length === 0) return;
     postBoard({ lists });
   };
 

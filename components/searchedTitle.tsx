@@ -68,7 +68,7 @@ export default function SearchedTitle({
           },
         }}
       >
-        <a className="cursor-pointer flex gap-2 border-2 rounded-lg overflow-hidden shadow-md select-none ">
+        <a className="cursor-pointer flex gap-2 border-2 rounded-lg overflow-hidden shadow-sm hover:shadow-md select-none ">
           <li className="flex gap-2 overflow-hidden w-full">
             {poster_path ? (
               <Image

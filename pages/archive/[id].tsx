@@ -33,6 +33,12 @@ const Board: NextPage = () => {
   );
 
   useEffect(() => {
+    if (lists) {
+      console.log("lists", lists);
+    }
+  }, [lists]);
+
+  useEffect(() => {
     if (postResult) {
       console.log(postResult);
     }
@@ -112,7 +118,7 @@ const Board: NextPage = () => {
             )}
           </button>
         </nav>
-        <main className="flex gap-2 mx-2">
+        <main className="flex gap-2 mx-2 min-h-[100px]">
           {lists.map((list: any, index: number) => (
             <DraggableList
               key={index}

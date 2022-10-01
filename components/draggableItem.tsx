@@ -86,24 +86,66 @@ function DraggableItem({
           className="bg-white p-2 rounded-lg hover:shadow-md relative group"
         >
           {editOn ? (
-            <form onSubmit={handleSubmitEdit(onEditValid)}>
-              <textarea
-                {...register("updatedIdea")}
-                required={true}
-                className="appearance-none w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500  min-h-[130px]"
-                onBlur={() => console.log("close")}
-              />
-              <div className="flex gap-2">
-                <Button text={"update"} />
-                <Button text={"close"} onClick={onEditClose} />
+            <>
+              <form onSubmit={handleSubmitEdit(onEditValid)}>
+                <textarea
+                  {...register("updatedIdea")}
+                  required={true}
+                  className="appearance-none w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500  min-h-[130px]"
+                  onBlur={onEditValid}
+                />
+              </form>
+              <div className="flex gap-1 text-xs justify-end">
+                <button
+                  type="button"
+                  onClick={onEditValid}
+                  className="text-gray-400 py-1.5 px-2 hover:text-gray-800 bg-gray-100 rounded-lg flex gap-0.5 items-center"
+                >
+                  <svg
+                    className="w-3 h-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <span>Update</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={onEditClose}
+                  className="text-gray-400 py-1.5 px-2 hover:text-gray-800 bg-gray-100 rounded-lg flex gap-0.5 items-center"
+                >
+                  <svg
+                    className="w-3 h-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                  <span>Cancel</span>
+                </button>
               </div>
-            </form>
+            </>
           ) : (
             <>
               <button
                 type="button"
                 onClick={() => setEditOn(true)}
-                className="text-gray-400 p-1.5 grid hover:text-gray-800 absolute top-1 right-9 bg-gray-100 rounded-lg group-hover:visible"
+                className="text-gray-400 p-1.5 grid hover:text-gray-800 absolute top-1 right-9 bg-gray-100 rounded-lg group-hover:visible invisible"
               >
                 <svg
                   className="w-4 h-4 justify-self-end"
@@ -123,7 +165,7 @@ function DraggableItem({
               <button
                 type="button"
                 onClick={() => setOpenModal(true)}
-                className="text-gray-400 p-1.5 grid hover:text-gray-800 absolute top-1 right-1 bg-gray-100 rounded-lg group-hover:visible"
+                className="text-gray-400 p-1.5 grid hover:text-gray-800 absolute top-1 right-1 bg-gray-100 rounded-lg group-hover:visible invisible"
               >
                 <svg
                   className="w-4 h-4 justify-self-end"

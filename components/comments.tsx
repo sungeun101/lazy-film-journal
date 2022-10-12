@@ -26,7 +26,7 @@ interface MutationResult {
   idea: Idea;
 }
 
-export default function Message({
+export default function Comments({
   message,
   avatarUrl,
   reversed,

@@ -7,8 +7,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWR, { useSWRConfig } from "swr";
-import Layout from "../../../components/layout";
-import Message from "../../../components/message";
+import Layout from "@components/layout";
+import Comments from "@components/comments";
 
 interface CommentInfo {
   snippet: any;
@@ -91,7 +91,7 @@ const VideoItem: NextPage = () => {
                 comments.items.map(
                   ({ snippet, id }: CommentInfo, index: number) => (
                     <div key={id}>
-                      <Message
+                      <Comments
                         message={snippet.topLevelComment.snippet.textOriginal}
                         reversed={index % 2 == 1}
                         commentId={id}

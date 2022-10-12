@@ -34,6 +34,16 @@ async function handler(
           id: alreadyExists.id,
         },
       });
+      await client.idea.delete({
+        where: {
+          id: alreadyExists.id.toString(),
+        },
+      });
+      await client.board.delete({
+        where: {
+          id: alreadyExists.id,
+        },
+      });
       res.json({
         ok: true,
         watched,

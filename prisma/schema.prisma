@@ -170,5 +170,5 @@ model Board {
   watched     Watched   @relation(fields: [watchedId], references: [id], onDelete: Cascade)
   watchedId   Int       @unique
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      Int       @unique
+  userId      Int       
 }

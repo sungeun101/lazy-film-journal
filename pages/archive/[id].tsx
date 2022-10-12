@@ -7,6 +7,7 @@ import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import DraggableList from "@components/draggableList";
 import useMutation from "@libs/client/useMutation";
 import { CircularProgress } from "@mui/material";
+
 interface WatchedWithIdeas extends Watched {
   ideas: Idea[];
 }
@@ -35,6 +36,8 @@ const Board: NextPage = () => {
   useEffect(() => {
     if (lists) {
       console.log("lists", lists);
+      console.log("boardData", boardData);
+      console.log("watchedData", watchedData);
     }
   }, [lists]);
 
@@ -49,7 +52,7 @@ const Board: NextPage = () => {
       if (boardData.board?.lists) {
         setLists(boardData.board.lists);
       } else {
-        setLists([watchedData.watched.ideas]);
+        setLists([watchedData.watched?.ideas]);
       }
     }
   }, [boardData, watchedData]);
@@ -101,6 +104,7 @@ const Board: NextPage = () => {
               {watchedData.watched.original_title}
             </h1>
           )}
+
           <button
             onClick={onClickSave}
             className="bg-orange-500 hover:bg-orange-600 text-white border border-transparent rounded-md shadow-sm font-medium focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:outline-none text-sm px-2 h-8 w-14 flex justify-center items-center"

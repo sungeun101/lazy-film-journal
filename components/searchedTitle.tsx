@@ -5,6 +5,13 @@ import { WatchedData } from "pages/archive";
 import { useRouter } from "next/router";
 import { cls } from "@libs/client/utils";
 import Link from "next/link";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  Button,
+} from "@mui/material";
 
 export interface SearchedTitleProps {
   id: number;
@@ -30,18 +37,19 @@ export default function SearchedTitle({
   const router = useRouter();
 
   const [isLiked, setIsLiked] = useState(isLikedBefore);
+  const [openModal, setOpenModal] = useState(false);
 
-  const [postThisTitle, { data: watchedMutated }] =
+  const [toggleHeart, { data: heartMutated }] =
     useMutation<WatchedData>("/api/archive");
 
   useEffect(() => {
-    if (watchedMutated?.ok) {
+    if (heartMutated?.ok) {
       setIsLiked((prev) => !prev);
     }
-  }, [watchedMutated]);
+  }, [heartMutated]);
 
-  const onClickHeart = () => {
-    postThisTitle({
+  const handleHeart = () => {
+    toggleHeart({
       id,
       poster_path,
       original_title,
@@ -49,6 +57,17 @@ export default function SearchedTitle({
       overview,
       isMovie,
     });
+    setIsLiked((prev) => !prev);
+  };
+
+  const onClickModalYes = () => {
+    setOpenModal(false);
+    handleHeart();
+    setIsLiked((prev) => !prev);
+  };
+
+  const onClickModalNo = () => {
+    setOpenModal(false);
   };
 
   return (
@@ -118,28 +137,75 @@ export default function SearchedTitle({
           </li>
         </a>
       </Link>
-      <button
-        onClick={onClickHeart}
-        className={cls(
-          isLiked ? "text-orange-500" : "text-slate-300",
-          "rounded-full hover:text-orange-500 absolute right-2.5 top-2.5"
-        )}
-      >
-        <svg
-          className="w-6 h-6"
-          fill={isLiked ? "currentColor" : "none"}
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
+
+      {router.pathname === "/archive" ? (
+        <>
+          <button
+            onClick={() => setOpenModal(true)}
+            className={cls(
+              isLiked
+                ? "text-orange-500 hover:text-slate-300"
+                : "text-slate-300",
+              "rounded-full hover:text-orange-500 absolute right-2.5 top-2.5"
+            )}
+          >
+            <svg
+              className="w-6 h-6"
+              fill={isLiked ? "currentColor" : "none"}
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+              />
+            </svg>
+          </button>
+          <Dialog
+            open={openModal}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Would you like to delete this? Your board will also be deleted!
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={onClickModalNo}>No</Button>
+              <Button onClick={onClickModalYes} autoFocus>
+                Yes
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </>
+      ) : (
+        <button
+          onClick={handleHeart}
+          className={cls(
+            isLiked ? "text-orange-500 hover:text-slate-300" : "text-slate-300",
+            "rounded-full hover:text-orange-500 absolute right-2.5 top-2.5"
+          )}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-          />
-        </svg>
-      </button>
+          <svg
+            className="w-6 h-6"
+            fill={isLiked ? "currentColor" : "none"}
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+            />
+          </svg>
+        </button>
+      )}
     </div>
   );
 }

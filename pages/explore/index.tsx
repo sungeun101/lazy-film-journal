@@ -3,7 +3,6 @@ import Spinner from "@components/spinner";
 import useMutation from "@libs/client/useMutation";
 import { handleFetch } from "@libs/client/utils";
 import { Watched } from "@prisma/client";
-import { useQuery } from "@tanstack/react-query";
 import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -94,7 +93,7 @@ const Explore: NextPage = () => {
         )}&page=1&include_adult=false&language=en`
       : null
   );
-  console.log("tmdb", tmdb);
+
   const onSearchValid = (userInput: any) => {
     // setShowTitles(true);
   };

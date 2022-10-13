@@ -43,6 +43,9 @@ function DraggableItem({
   const onClickModalYes = () => {
     setOpenModal(false);
     setLists((prev: any) => {
+      if (prev.length === 1 && prev[0].length === 1) {
+        return [[]];
+      }
       const arrAfterUpdated = [...prev][listIndex].filter(
         (obj: { id: string; content: string }) => obj.id !== idea.id
       );
@@ -50,7 +53,6 @@ function DraggableItem({
         ...prev,
         [listIndex.toString()]: arrAfterUpdated,
       };
-
       return Object.values(result).filter((list: any) => list.length !== 0);
     });
   };

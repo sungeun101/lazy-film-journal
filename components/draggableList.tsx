@@ -95,6 +95,7 @@ function DraggableList({
           </Button>
         </DialogActions>
       </Dialog>
+
       <Droppable droppableId={listIndex.toString()}>
         {(magic: any) => (
           <ul

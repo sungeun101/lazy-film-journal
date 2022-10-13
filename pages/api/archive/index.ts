@@ -78,6 +78,9 @@ async function handler(
           select: { ideas: true },
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
     res.json({
       ok: true,

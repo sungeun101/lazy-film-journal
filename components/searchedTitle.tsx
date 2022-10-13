@@ -39,7 +39,7 @@ export default function SearchedTitle({
   const [isLiked, setIsLiked] = useState(isLikedBefore);
   const [openModal, setOpenModal] = useState(false);
 
-  const [toggleHeart, { data: heartMutated }] =
+  const [mutateHeart, { data: heartMutated }] =
     useMutation<WatchedData>("/api/archive");
 
   useEffect(() => {
@@ -48,8 +48,8 @@ export default function SearchedTitle({
     }
   }, [heartMutated]);
 
-  const handleHeart = () => {
-    toggleHeart({
+  const toggleHeart = () => {
+    mutateHeart({
       id,
       poster_path,
       original_title,
@@ -57,12 +57,11 @@ export default function SearchedTitle({
       overview,
       isMovie,
     });
-    setIsLiked((prev) => !prev);
   };
 
   const onClickModalYes = () => {
     setOpenModal(false);
-    handleHeart();
+    toggleHeart();
     setIsLiked((prev) => !prev);
   };
 
@@ -184,7 +183,7 @@ export default function SearchedTitle({
         </>
       ) : (
         <button
-          onClick={handleHeart}
+          onClick={toggleHeart}
           className={cls(
             isLiked ? "text-orange-500 hover:text-slate-300" : "text-slate-300",
             "rounded-full hover:text-orange-500 absolute right-2.5 top-2.5"

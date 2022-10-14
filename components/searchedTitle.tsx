@@ -12,6 +12,8 @@ import {
   DialogContentText,
   Button,
 } from "@mui/material";
+import useSWR from "swr";
+import board from "pages/api/archive/[id]/board";
 
 export interface SearchedTitleProps {
   id: number;
@@ -32,15 +34,29 @@ export default function SearchedTitle({
   overview,
   isLikedBefore,
   isMovie,
-  ideaCount,
+  ideaCount = 0,
 }: SearchedTitleProps) {
   const router = useRouter();
 
   const [isLiked, setIsLiked] = useState(isLikedBefore);
   const [openModal, setOpenModal] = useState(false);
+  const [ideasAllTogether, setIdeasAllTogether] = useState(0);
 
   const [mutateHeart, { data: heartMutated }] =
     useMutation<WatchedData>("/api/archive");
+
+  const { data: boardData } = useSWR(id ? `/api/archive/${id}/board` : null);
+
+  useEffect(() => {
+    if (boardData?.board?.lists) {
+      const lengthOfEachList = boardData.board.lists
+        .map((list: any) => list.length)
+        .reduce((prev: any, current: any) => prev + current);
+      setIdeasAllTogether(lengthOfEachList);
+    } else {
+      setIdeasAllTogether(ideaCount);
+    }
+  }, [boardData]);
 
   useEffect(() => {
     if (heartMutated?.ok) {
@@ -120,10 +136,10 @@ export default function SearchedTitle({
               <div className="mb-2 flex justify-between">
                 <h2 className="text-sm text-gray-400">{release_date}</h2>
                 {router.pathname === "/archive" &&
-                ideaCount &&
-                ideaCount > 0 ? (
+                ideasAllTogether &&
+                ideasAllTogether > 0 ? (
                   <span className="select-none text-sm bg-gray-200 rounded-lg px-2 py-0">
-                    {ideaCount} idea{ideaCount > 1 ? "s" : ""}
+                    {ideasAllTogether} idea{ideasAllTogether > 1 ? "s" : ""}
                   </span>
                 ) : (
                   ""

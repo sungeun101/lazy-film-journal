@@ -49,7 +49,7 @@ const Board: NextPage = () => {
 
   useEffect(() => {
     if (boardData && watchedData) {
-      if (boardData.board?.lists) {
+      if (boardData.board?.lists && boardData.board.lists[0].length > 0) {
         setLists(boardData.board.lists);
       } else {
         setLists([watchedData.watched?.ideas]);

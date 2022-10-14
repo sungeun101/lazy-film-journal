@@ -89,8 +89,7 @@ export default function SearchedTitle({
     <div className="flex flex-col relative">
       <Link
         href={{
-          pathname:
-            router.pathname === "/explore" ? `/explore/${id}` : `archive/${id}`,
+          pathname: router.pathname === "/" ? `/${id}` : `archive/${id}`,
           query: {
             id,
             poster_path,

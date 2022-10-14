@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
-import Layout from "../../../components/layout";
+import Layout from "@components/layout";
 
 export interface VideoInfo {
   snippet: any;
@@ -100,7 +100,7 @@ const VideosFromSearchedTitle: NextPage = () => {
       <main className="px-4 divide-y-[1px] space-y-4 flex flex-col items-center">
         {videos && videos.items ? (
           videos.items.map(({ snippet, id: { videoId } }: VideoInfo) => (
-            <Link key={videoId} href={`/explore/${videoId}/reviews`}>
+            <Link key={videoId} href={`/${videoId}/reviews`}>
               {snippet.thumbnails?.high?.url && (
                 <a className="pt-4 block">
                   <Image

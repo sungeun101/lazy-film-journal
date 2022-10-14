@@ -128,7 +128,7 @@ const VideoItem: NextPage = () => {
         </section>
       </div>
 
-      <FloatingButton href="/explore/create">
+      <FloatingButton href="/create">
         <svg
           className="w-6 h-6"
           fill="none"

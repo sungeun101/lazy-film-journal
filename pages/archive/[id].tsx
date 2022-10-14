@@ -33,19 +33,19 @@ const Board: NextPage = () => {
     `/api/archive/${id}/board`
   );
 
-  useEffect(() => {
-    if (lists) {
-      console.log("lists", lists);
-      console.log("boardData", boardData);
-      console.log("watchedData", watchedData);
-    }
-  }, [lists]);
+  // useEffect(() => {
+  //   if (lists) {
+  //     console.log("lists", lists);
+  //     console.log("boardData", boardData);
+  //     console.log("watchedData", watchedData);
+  //   }
+  // }, [lists]);
 
-  useEffect(() => {
-    if (postResult) {
-      console.log(postResult);
-    }
-  }, [postResult]);
+  // useEffect(() => {
+  //   if (postResult) {
+  //     console.log(postResult);
+  //   }
+  // }, [postResult]);
 
   useEffect(() => {
     if (boardData && watchedData) {

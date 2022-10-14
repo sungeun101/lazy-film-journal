@@ -19,7 +19,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       }}
     >
       <RecoilRoot>
-        <div className="w-full max-w-xl mx-auto">
+        <div className="w-full mx-auto">
           <Component {...pageProps} />
         </div>
       </RecoilRoot>

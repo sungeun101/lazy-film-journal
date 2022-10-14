@@ -1,8 +1,12 @@
 import { atom } from "recoil";
 
-const titleState = atom({
-  key: "title",
-  default: {},
+const homePathState = atom({
+  key: "homePath",
+  default: "/",
+});
+const archivePathState = atom({
+  key: "archivePath",
+  default: "/archive",
 });
 
-export { titleState };
+export { homePathState, archivePathState };

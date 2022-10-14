@@ -1,6 +1,5 @@
 import SearchedTitle from "@components/searchedTitle";
 import Spinner from "@components/spinner";
-import { titleState } from "@libs/client/states";
 import useMutation from "@libs/client/useMutation";
 import { handleFetch } from "@libs/client/utils";
 import { Watched } from "@prisma/client";

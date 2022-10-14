@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { cls } from "@libs/client/utils";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Idea } from "@prisma/client";
+import { useRecoilState } from "recoil";
+import { archivePathState, homePathState } from "@libs/client/states";
 
 interface LayoutProps {
   title?: string;
@@ -23,7 +25,18 @@ export default function Layout({
   children,
 }: LayoutProps) {
   const router = useRouter();
-  const { pathname } = router;
+  const { pathname, asPath } = router;
+
+  const [homePath, setHomePath] = useRecoilState(homePathState);
+  const [archivePath, setArchivePath] = useRecoilState(archivePathState);
+
+  useEffect(() => {
+    if (pathname.includes("archive")) {
+      setArchivePath(asPath);
+    } else {
+      setHomePath(asPath);
+    }
+  }, [asPath, pathname]);
 
   const { data: ideaData, isValidating } = useSWR<IdeaResponse>("/api/ideas");
 
@@ -97,7 +110,7 @@ export default function Layout({
       <div className={cls("pt-12", hasTabBar ? "pb-24" : "")}>{children}</div>
       {hasTabBar ? (
         <nav className="bg-white max-w-xl text-gray-700 border-t fixed bottom-0 w-full px-10 pb-5 pt-3 flex justify-between text-xs">
-          <Link href="/">
+          <Link href={homePath}>
             <a
               className={cls(
                 "flex flex-col items-center space-y-2 ",
@@ -124,7 +137,7 @@ export default function Layout({
             </a>
           </Link>
 
-          <Link href="/archive">
+          <Link href={archivePath}>
             <a
               className={cls(
                 "flex flex-col items-center space-y-2 ",

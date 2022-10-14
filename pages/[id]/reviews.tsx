@@ -65,7 +65,7 @@ const VideoItem: NextPage = () => {
   };
 
   return (
-    <Layout canGoBack>
+    <Layout canGoBack hasTabBar>
       <div className="space-y-4">
         {video ? (
           <iframe

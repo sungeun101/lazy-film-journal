@@ -19,7 +19,7 @@ const Profile: NextPage = () => {
   const { user } = useUser();
   const { data } = useSWR<ReviewsResponse>("/api/reviews");
   return (
-    <Layout hasTabBar title="My Account">
+    <Layout title="My Account">
       <div className="px-4">
         <div className="flex items-center space-x-3 mt-4">
           <div className="w-16 h-16 bg-slate-500 rounded-full"></div>

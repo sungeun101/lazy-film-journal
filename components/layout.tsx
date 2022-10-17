@@ -10,7 +10,6 @@ import { archivePathState, homePathState } from "@libs/client/states";
 interface LayoutProps {
   title?: string;
   canGoBack?: boolean;
-  hasTabBar?: boolean;
   children: React.ReactNode;
 }
 interface IdeaResponse {
@@ -18,12 +17,7 @@ interface IdeaResponse {
   ideas: Idea[];
 }
 
-export default function Layout({
-  title,
-  canGoBack,
-  hasTabBar,
-  children,
-}: LayoutProps) {
+export default function Layout({ title, canGoBack, children }: LayoutProps) {
   const router = useRouter();
   const { pathname, asPath } = router;
 
@@ -38,23 +32,37 @@ export default function Layout({
     }
   }, [asPath, pathname]);
 
-  const { data: ideaData, isValidating } = useSWR<IdeaResponse>("/api/ideas");
+  useEffect(() => {
+    console.log("home Path", homePath);
+    console.log("archivePath", archivePath);
+  }, [homePath, archivePath]);
+
+  // const { data: ideaData, isValidating } = useSWR<IdeaResponse>("/api/ideas");
 
   const onClickGoBack = () => {
-    router.back();
+    console.log("router", router);
+
+    if (pathname === "/archive/[id]") {
+      router.push("/archive");
+    } else if (pathname.includes("reviews")) {
+      const prevPath = sessionStorage.getItem("searchedVideosPath");
+      if (prevPath) {
+        router.push(prevPath);
+      }
+    } else {
+      router.push("/");
+    }
   };
 
-  const onClickCart = () => {
-    router.push("/ideas");
-  };
+  // const onClickCart = () => {
+  //   router.push("/ideas");
+  // };
 
   return (
-    <div>
+    <section className="w-full">
       <div
-        className={cls(
-          router.pathname === "/archive" ? "z-10" : "",
-          "bg-white w-full h-12 justify-center text-lg px-10 font-medium fixed text-gray-800 top-0  flex items-center"
-        )}
+        className="z-10 
+          bg-white w-full h-12 text-lg px-10 font-medium fixed text-gray-800 top-0 flex items-center"
       >
         {canGoBack ? (
           <button onClick={onClickGoBack} className="absolute left-4">
@@ -75,10 +83,94 @@ export default function Layout({
           </button>
         ) : null}
         {title ? (
-          <span className={cls(canGoBack ? "mx-auto" : "", "")}>{title}</span>
+          <span
+            className={cls(router.pathname === "/archive" ? "mx-auto" : "", "")}
+          >
+            {title}
+          </span>
         ) : null}
+        <nav className="text-gray-700 absolute right-4 flex gap-4 text-xs z-50 h-full">
+          <Link href={homePath}>
+            <a
+              className={cls(
+                "flex flex-col items-center justify-center space-y-0.5 md:flex-row md:gap-1",
+                router.pathname !== "/archive"
+                  ? "text-orange-500 md:border-b-4 border-orange-300 h-full"
+                  : "hover:text-gray-500 transition-colors"
+              )}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              <span>Explore</span>
+            </a>
+          </Link>
+          <Link href={archivePath}>
+            <a
+              className={cls(
+                "flex flex-col items-center justify-center space-y-0.5 md:flex-row md:gap-1",
+                router.pathname === "/archive"
+                  ? "text-orange-500 md:border-b-4 border-orange-300 h-full"
+                  : "hover:text-gray-500 transition-colors"
+              )}
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+                />
+              </svg>
+              <span>Archive</span>
+            </a>
+          </Link>
+          {/* <Link href="/profile">
+            <a
+              className={cls(
+                "flex flex-col items-center space-y-0.5 justify-center",
+                router.pathname === "/profile"
+                  ? "text-orange-500"
+                  : "hover:text-gray-500 transition-colors"
+              )}
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                ></path>
+              </svg>
+              <span>My Account</span>
+            </a>
+          </Link> */}
+        </nav>
         {/* idea cart button */}
-        {pathname !== "/" && (
+        {/* {pathname !== "/" && (
           <button onClick={onClickCart} className="absolute right-6">
             <svg
               className="w-6 h-6"
@@ -104,94 +196,9 @@ export default function Layout({
               </span>
             )}
           </button>
-        )}
+        )} */}
       </div>
-
-      <div className={cls("pt-12", hasTabBar ? "pb-24" : "")}>{children}</div>
-      {hasTabBar ? (
-        <nav className="bg-white max-w-xl text-gray-700 border-t fixed bottom-0 w-full px-10 pb-5 pt-3 flex justify-between text-xs">
-          <Link href={homePath}>
-            <a
-              className={cls(
-                "flex flex-col items-center space-y-2 ",
-                router.pathname === "/live"
-                  ? "text-orange-500"
-                  : "hover:text-gray-500 transition-colors"
-              )}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-              <span>Explore</span>
-            </a>
-          </Link>
-
-          <Link href={archivePath}>
-            <a
-              className={cls(
-                "flex flex-col items-center space-y-2 ",
-                router.pathname === "/archive"
-                  ? "text-orange-500"
-                  : "hover:text-gray-500 transition-colors"
-              )}
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-                />
-              </svg>
-              <span>Archive</span>
-            </a>
-          </Link>
-
-          {/* <Link href="/profile">
-            <a
-              className={cls(
-                "flex flex-col items-center space-y-2 ",
-                router.pathname === "/profile"
-                  ? "text-orange-500"
-                  : "hover:text-gray-500 transition-colors"
-              )}
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                ></path>
-              </svg>
-              <span>My Account</span>
-            </a>
-          </Link> */}
-        </nav>
-      ) : null}
-    </div>
+      <main className="my-12 z-0">{children}</main>
+    </section>
   );
 }

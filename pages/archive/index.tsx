@@ -20,7 +20,7 @@ const Archive: NextPage = () => {
     useSWR<WatchedData>("/api/archive");
 
   return (
-    <Layout title="Archive" hasTabBar>
+    <Layout title="Archive">
       {isValidating ? (
         <Spinner />
       ) : watchedData?.watched && watchedData.watched.length === 0 ? (

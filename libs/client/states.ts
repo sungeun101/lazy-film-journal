@@ -8,5 +8,9 @@ const archivePathState = atom({
   key: "archivePath",
   default: "/archive",
 });
+const showSearchResultState = atom({
+  key: "showSearchResult",
+  default: false,
+});
 
-export { homePathState, archivePathState };
+export { homePathState, archivePathState, showSearchResultState };

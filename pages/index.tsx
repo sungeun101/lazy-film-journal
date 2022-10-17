@@ -11,6 +11,8 @@ import { useForm } from "react-hook-form";
 import useSWR from "swr";
 import FloatingButton from "@components/floating-button";
 import Layout from "@components/layout";
+import { useRecoilState } from "recoil";
+import { showSearchResultState } from "@libs/client/states";
 
 export interface VideoInfo {
   snippet: any;
@@ -32,40 +34,136 @@ interface MutationResult {
 
 const maxResults = 2;
 
-// tmdb sample
-// const tmdb = {
-//   page: 1,
-//   results: [
-//     {
-//       backdrop_path: "/iW74tZ8y2qobdpt4J9UQ71sw8q7.jpg",
-//       first_air_date: "2020-10-02",
-//       genre_ids: [18, 35],
-//       id: 82596,
-//       name: "Emily in Paris",
-//       origin_country: ["US"],
-//       original_language: "en",
-//       original_name: "Emily in Paris",
-//       overview:
-//         "When ambitious Chicago marketing exec Emily unexpectedly lands her dream job in Paris, she embraces a new life as she juggles work, friends and romance.",
-//       popularity: 57.128,
-//       poster_path: "/Ak59Y9bzykmV0wAiwKsqrbORDBo.jpg",
-//       vote_average: 8,
-//       vote_count: 854,
-//     },
-//   ],
-//   total_pages: 1,
-//   total_results: 1,
-// };
+const mockTitles = [
+  {
+    adult: false,
+    backdrop_path: "/7ABsaBkO1jA2psC8Hy4IDhkID4h.jpg",
+    genre_ids: [28, 12, 14, 878],
+    id: 19995,
+    original_language: "en",
+    original_title: "Avatar",
+    overview:
+      "In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission, but becomes torn between following orders and protecting an alien civilization.",
+    popularity: 648.095,
+    poster_path: "/jRXYjXNq0Cs2TcJjLkki24MLp7u.jpg",
+    release_date: "2009-12-15",
+    title: "Avatar",
+    video: false,
+    vote_average: 7.5,
+    vote_count: 26316,
+  },
+  {
+    adult: false,
+    backdrop_path: "/198vrF8k7mfQ4FjDJsBmdQcaiyq.jpg",
+    genre_ids: [878, 28, 12],
+    id: 76600,
+    original_language: "en",
+    original_title: "Avatar: The Way of Water",
+    overview:
+      "Set more than a decade after the events of the first film, learn the story of the Sully family (Jake, Neytiri, and their kids), the trouble that follows them, the lengths they go to keep each other safe, the battles they fight to stay alive, and the tragedies they endure.",
+    popularity: 526.294,
+    poster_path: "/1yppMeTNQwDrzaUH4dRCx4mr8We.jpg",
+    release_date: "2022-12-14",
+    title: "Avatar: The Way of Water",
+    video: false,
+    vote_average: 0,
+    vote_count: 0,
+  },
+  {
+    adult: false,
+    backdrop_path: null,
+    genre_ids: [99],
+    id: 287003,
+    original_language: "en",
+    original_title: "Avatar: Scene Deconstruction",
+    overview: "The deconstruction of the Avatar scenes and sets",
+    popularity: 126.336,
+    poster_path: "/uCreCQFReeF0RiIXkQypRYHwikx.jpg",
+    release_date: "2009-12-18",
+    title: "Avatar: Scene Deconstruction",
+    video: false,
+    vote_average: 9,
+    vote_count: 3,
+  },
+  {
+    adult: false,
+    backdrop_path: "/uEwGFGtao9YG2JolmdvtHLLVbA9.jpg",
+    genre_ids: [99],
+    id: 111332,
+    original_language: "en",
+    original_title: "Avatar: Creating the World of Pandora",
+    overview:
+      "The Making-of James Cameron's Avatar. It shows interesting parts of the work on the set.",
+    popularity: 129.32,
+    poster_path: "/sjf3xjuofCtDhZghJRzXlTiEjJe.jpg",
+    release_date: "2010-02-07",
+    title: "Avatar: Creating the World of Pandora",
+    video: false,
+    vote_average: 7,
+    vote_count: 20,
+  },
+  {
+    adult: false,
+    backdrop_path: null,
+    genre_ids: [28, 878, 12, 14],
+    id: 216527,
+    original_language: "en",
+    original_title: "Avatar 4",
+    overview: "",
+    popularity: 47.705,
+    poster_path: "/qHvsKYrWm7MCGqvRb0mUX26Sqgb.jpg",
+    release_date: "2026-12-16",
+    title: "Avatar 4",
+    video: false,
+    vote_average: 0,
+    vote_count: 0,
+  },
+  {
+    adult: false,
+    backdrop_path: null,
+    genre_ids: [28, 18, 878, 12, 14],
+    id: 83533,
+    original_language: "en",
+    original_title: "Avatar 3",
+    overview: "",
+    popularity: 41.244,
+    poster_path: "/hDG5IyML9SNbiQ6T1lYWliPYy3Q.jpg",
+    release_date: "2024-12-18",
+    title: "Avatar 3",
+    video: false,
+    vote_average: 0,
+    vote_count: 0,
+  },
+  {
+    adult: false,
+    backdrop_path: null,
+    genre_ids: [28, 12, 14, 878],
+    id: 393209,
+    original_language: "en",
+    original_title: "Avatar 5",
+    overview: "",
+    popularity: 29.575,
+    poster_path: "/cOW3wFkecesFqh8XWKERKKfiNFl.jpg",
+    release_date: "2028-12-20",
+    title: "Avatar 5",
+    video: false,
+    vote_average: 0,
+    vote_count: 0,
+  },
+];
 
 const Explore: NextPage = () => {
   const [isReviewVideo, setIsReviewVideo] = useState(false);
-  const [showTitles, setShowTitles] = useState(false);
+  const [showSearchResult, setShowSearchResult] = useRecoilState(
+    showSearchResultState
+  );
 
   const {
     register: searchRegister,
     handleSubmit: handleSearchSubmit,
     getValues,
     watch,
+    formState: { isDirty },
   } = useForm();
   const { movieOrSeries } = getValues();
 
@@ -94,25 +192,23 @@ const Explore: NextPage = () => {
       : null
   );
 
-  const onSearchValid = (userInput: any) => {
-    // setShowTitles(true);
-  };
+  const onSearchValid = (userInput: any) => {};
 
   // const changeReviewType = () => {
   //   setIsReviewVideo((prev) => !prev);
   // };
 
   return (
-    <Layout hasTabBar>
+    <Layout>
       {/* searchbar */}
       <form
         onSubmit={handleSearchSubmit(onSearchValid)}
-        className="fixed inset-x-0 top-2 w-full max-w-md mx-auto flex z-10"
+        className="fixed top-1 left-4 lg:left-1/2 lg:-translate-x-1/2  w-full max-w-xs sm:max-w-md flex z-10"
       >
         <input
           {...searchRegister("searchWord")}
           type="text"
-          placeholder="What have you watched?"
+          placeholder="How about 'Avatar'?"
           className="w-full pl-28 border-gray-300 rounded-full shadow-sm focus:ring-orange-500 focus:border-orange-500 focus:outline-none"
         />
         <div className="absolute inset-y-0 left-2 flex p-1 text-orange-500">
@@ -134,7 +230,7 @@ const Explore: NextPage = () => {
         </div> */}
       </form>
       {tmdb?.results ? (
-        <main className="px-4 space-y-5 mt-4 z-0">
+        <main className="p-4 space-y-5">
           {tmdb?.results?.length === 0 ? (
             <div className="flex justify-center">
               Nothing Found. Are you sure you are searching for
@@ -243,31 +339,38 @@ const Explore: NextPage = () => {
                 )
               )}
             </>
+          ) : watch("searchWord")?.length > 0 ? (
+            "loading"
           ) : (
-            <>
-              <div className="w-full rounded-md shadow-sm bg-slate-300 aspect-video"></div>
-              <h1 className="text-2xl mt-2 font-bold text-gray-900">
-                loading...
-              </h1>
-            </>
+            mockTitles.map(
+              ({
+                id,
+                poster_path,
+                original_name,
+                original_title,
+                first_air_date,
+                release_date,
+                overview,
+              }: TitleInfo) => (
+                <SearchedTitle
+                  key={id}
+                  id={id}
+                  poster_path={poster_path}
+                  original_title={original_title || original_name || ""}
+                  release_date={release_date || first_air_date || ""}
+                  overview={overview}
+                  isLikedBefore={
+                    watched
+                      ? watched.watched.some(
+                          (item: TitleInfo) => item.id === id
+                        )
+                      : false
+                  }
+                  isMovie={Boolean(release_date)}
+                />
+              )
+            )
           )}
-
-          <FloatingButton href="/create">
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-              />
-            </svg>
-          </FloatingButton>
         </main>
       )}
     </Layout>

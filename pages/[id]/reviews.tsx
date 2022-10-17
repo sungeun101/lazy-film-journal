@@ -50,6 +50,13 @@ const VideoItem: NextPage = () => {
   const { mutate } = useSWRConfig();
 
   useEffect(() => {
+    console.log("comments", comments);
+    if (comments?.error) {
+      console.log("eeorr");
+    }
+  }, [comments]);
+
+  useEffect(() => {
     if (ideaResult && ideaResult.ok) {
       mutate("/api/ideas");
     }
@@ -65,7 +72,7 @@ const VideoItem: NextPage = () => {
   };
 
   return (
-    <Layout canGoBack hasTabBar>
+    <Layout canGoBack>
       <div className="space-y-4">
         {video ? (
           <iframe
@@ -86,7 +93,7 @@ const VideoItem: NextPage = () => {
           </h1>
           <div>
             <h2 className="text-lg text-gray-900 pt-4 py-2">Comments</h2>
-            <main className="pb-16 h-[50vh] overflow-y-scroll px-1 space-y-4">
+            <main className="pb-16 overflow-y-scroll px-1 space-y-4">
               {comments?.items ? (
                 comments.items.map(
                   ({ snippet, id }: CommentInfo, index: number) => (
@@ -99,11 +106,14 @@ const VideoItem: NextPage = () => {
                     </div>
                   )
                 )
+              ) : comments?.error?.code === 403 ? (
+                <div className="flex justify-center p-4 text-gray-400">
+                  Nothing Found!
+                </div>
               ) : (
                 <Spinner />
               )}
             </main>
-
             {/* my comment */}
             <div className="fixed p-2 bg-white  bottom-0 inset-x-0">
               <form
@@ -128,7 +138,7 @@ const VideoItem: NextPage = () => {
         </section>
       </div>
 
-      <FloatingButton href="/create">
+      {/* <FloatingButton href="/create">
         <svg
           className="w-6 h-6"
           fill="none"
@@ -143,7 +153,7 @@ const VideoItem: NextPage = () => {
             d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
           />
         </svg>
-      </FloatingButton>
+      </FloatingButton> */}
     </Layout>
   );
 };

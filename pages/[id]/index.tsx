@@ -35,18 +35,19 @@ const maxResults = 2;
 const VideosFromSearchedTitle: NextPage = () => {
   // const [isReviewVideo, setIsReviewVideo] = useState(false);
   const router = useRouter();
-  console.log(router);
-  const { query } = router;
+  const { query, asPath } = router;
+  const { original_title } = query;
 
   useEffect(() => {
-    if (query) {
+    if (query && asPath) {
       sessionStorage.setItem("title", JSON.stringify(query));
+      sessionStorage.setItem("searchedVideosPath", asPath);
     }
-  }, [query]);
+  }, [query, asPath]);
 
   const { data: videos } = useSWR(
-    router.query
-      ? `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${query.original_title}%review&regionCode=us&relevanceLanguage=en&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+    query
+      ? `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${original_title}%review&regionCode=us&relevanceLanguage=en&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
       : null
   );
 
@@ -66,7 +67,7 @@ const VideosFromSearchedTitle: NextPage = () => {
   // };
 
   return (
-    <Layout hasTabBar canGoBack title={query.original_title?.toString()}>
+    <Layout canGoBack title={original_title?.toString()}>
       {/* <form
         onSubmit={handleSearchSubmit(onSearchValid)}
         className="fixed inset-x-0 top-2 w-full max-w-md mx-auto flex z-10"

@@ -16,6 +16,8 @@ function MyApp({ Component, pageProps }: AppProps) {
             router.push("/enter");
           }
         },
+        revalidateOnFocus: false,
+        revalidateIfStale: false,
       }}
     >
       <RecoilRoot>

@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import useSWR, { useSWRConfig } from "swr";
 import Layout from "@components/layout";
 import Comments from "@components/comments";
+import { Alert } from "@mui/material";
 
 interface CommentInfo {
   snippet: any;
@@ -23,7 +24,7 @@ interface MutationResult {
   error?: string;
 }
 
-const commentMaxResults = 2;
+const commentMaxResults = 10;
 
 const VideoItem: NextPage = () => {
   const {
@@ -49,31 +50,31 @@ const VideoItem: NextPage = () => {
 
   const { mutate } = useSWRConfig();
 
-  useEffect(() => {
-    console.log("comments", comments);
-    if (comments?.error) {
-      console.log("eeorr");
-    }
-  }, [comments]);
+  const [showUploadAlert, setShowUploadAlert] = useState(false);
 
   useEffect(() => {
     if (ideaResult && ideaResult.ok) {
+      reset();
+      setShowUploadAlert(true);
       mutate("/api/ideas");
+      const timer = setTimeout(() => {
+        setShowUploadAlert(false);
+      }, 3000);
+      return () => clearTimeout(timer);
     }
-    reset();
   }, [ideaResult, mutate, reset]);
 
   const onValid = (data: UploadIdeaForm) => {
     const title = sessionStorage.getItem("title");
     if (title) {
       const parsedTitle = JSON.parse(title);
-      uploadIdeas({ ...data, titleId: parsedTitle.id });
+      uploadIdeas({ ...data, ...parsedTitle });
     }
   };
 
   return (
     <Layout canGoBack>
-      <div className="space-y-4">
+      <div className="space-y-4 max-w-7xl mx-auto ">
         {video ? (
           <iframe
             // width={video.snippet?.thumbnails?.default?.high?.width}
@@ -93,7 +94,7 @@ const VideoItem: NextPage = () => {
           </h1>
           <div>
             <h2 className="text-lg text-gray-900 pt-4 py-2">Comments</h2>
-            <main className="pb-16 overflow-y-scroll px-1 space-y-4">
+            <main className="pb-16 px-1 space-y-4">
               {comments?.items ? (
                 comments.items.map(
                   ({ snippet, id }: CommentInfo, index: number) => (
@@ -115,7 +116,7 @@ const VideoItem: NextPage = () => {
               )}
             </main>
             {/* my comment */}
-            <div className="fixed p-2 bg-white  bottom-0 inset-x-0">
+            <div className="fixed p-2 bottom-0 inset-x-0">
               <form
                 className="flex relative max-w-md items-center  w-full mx-auto"
                 onSubmit={handleSubmit(onValid)}
@@ -133,6 +134,13 @@ const VideoItem: NextPage = () => {
                   </button>
                 </div>
               </form>
+              {showUploadAlert && (
+                <div className="absolute -top-16 left-1/2 -translate-x-1/2 rounded-lg overflow-hidden">
+                  <Alert severity="success" color="warning">
+                    Saved to your archive!
+                  </Alert>
+                </div>
+              )}
             </div>
           </div>
         </section>

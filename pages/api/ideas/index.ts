@@ -14,7 +14,15 @@ async function handler(
     } = req;
     if (body.content) {
       // my idea
-      const { content, titleId } = body;
+      const {
+        content,
+        id,
+        poster_path,
+        original_title,
+        release_date,
+        overview,
+        isMovie,
+      } = body;
       const idea = await client.idea.create({
         data: {
           content,
@@ -24,8 +32,21 @@ async function handler(
             },
           },
           watched: {
-            connect: {
-              id: Number(titleId),
+            connectOrCreate: {
+              where: {
+                id: Number(id),
+              },
+              create: {
+                id: Number(id),
+                poster_path,
+                original_title,
+                release_date,
+                overview,
+                isMovie: Boolean(isMovie),
+                user: {
+                  connect: { id: user?.id },
+                },
+              },
             },
           },
         },

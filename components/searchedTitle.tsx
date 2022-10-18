@@ -13,7 +13,6 @@ import {
   Button,
 } from "@mui/material";
 import useSWR from "swr";
-import board from "pages/api/archive/[id]/board";
 
 export interface SearchedTitleProps {
   id: number;

@@ -30,7 +30,7 @@ interface MutationResult {
   watched: Watched[];
 }
 
-const maxResults = 2;
+const maxResults = 5;
 
 const VideosFromSearchedTitle: NextPage = () => {
   // const [isReviewVideo, setIsReviewVideo] = useState(false);
@@ -46,9 +46,10 @@ const VideosFromSearchedTitle: NextPage = () => {
   }, [query, asPath]);
 
   const { data: videos } = useSWR(
-    query
-      ? `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${original_title}%review&regionCode=us&relevanceLanguage=en&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
-      : null
+    // query
+    //   ? `https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=${maxResults}&q=${original_title}%review&regionCode=us&relevanceLanguage=en&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+    //   :
+    null
   );
 
   const { data: tmdb } = useSWR(
@@ -97,19 +98,19 @@ const VideosFromSearchedTitle: NextPage = () => {
       </div> 
       </form> */}
 
-      <main className="px-4 divide-y-[1px] space-y-4 flex flex-col items-center">
+      <main className="md:px-10 grid md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 place-items-center">
         {videos && videos.items ? (
           videos.items.map(({ snippet, id: { videoId } }: VideoInfo) => (
             <Link key={videoId} href={`/${videoId}/reviews`}>
               {snippet.thumbnails?.high?.url && (
-                <a className="pt-4 block">
+                <div className="flex flex-col w-[400px] md:w-[320px] h-full mt-4">
                   <Image
                     src={snippet.thumbnails.high.url}
                     width={snippet.thumbnails.high.width}
                     height={snippet.thumbnails.high.height}
                     alt="thumbnail"
                   />
-                  <h1 className="text-2xl mt-2 font-bold text-gray-900">
+                  <h1 className="text-xl mt-2 font-bold text-gray-900">
                     {snippet.title.replace(
                       /&#(\d+);/g,
                       function (match: string, dec: number) {
@@ -117,7 +118,7 @@ const VideosFromSearchedTitle: NextPage = () => {
                       }
                     )}
                   </h1>
-                </a>
+                </div>
               )}
             </Link>
           ))

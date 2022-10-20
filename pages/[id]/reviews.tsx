@@ -1,7 +1,7 @@
 import FloatingButton from "@components/floating-button";
 import Spinner from "@components/spinner";
 import useMutation from "@libs/client/useMutation";
-import { Idea } from "@prisma/client";
+import { Idea, Watched } from "@prisma/client";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import useSWR, { useSWRConfig } from "swr";
 import Layout from "@components/layout";
 import Comments from "@components/comments";
-import { Alert } from "@mui/material";
+import { Alert, Button } from "@mui/material";
 
 interface CommentInfo {
   snippet: any;
@@ -27,9 +27,10 @@ interface MutationResult {
 const commentMaxResults = 10;
 
 const VideoItem: NextPage = () => {
+  const router = useRouter();
   const {
     query: { id },
-  } = useRouter();
+  } = router;
 
   const { data: video } = useSWR(
     // id
@@ -51,6 +52,7 @@ const VideoItem: NextPage = () => {
   const { mutate } = useSWRConfig();
 
   const [showUploadAlert, setShowUploadAlert] = useState(false);
+  const [title, setTitle] = useState<Watched | null>(null);
 
   useEffect(() => {
     if (ideaResult && ideaResult.ok) {
@@ -64,11 +66,17 @@ const VideoItem: NextPage = () => {
     }
   }, [ideaResult, mutate, reset]);
 
-  const onValid = (data: UploadIdeaForm) => {
+  useEffect(() => {
     const title = sessionStorage.getItem("title");
     if (title) {
       const parsedTitle = JSON.parse(title);
-      uploadIdeas({ ...data, ...parsedTitle });
+      setTitle(parsedTitle);
+    }
+  }, []);
+
+  const onValid = (data: UploadIdeaForm) => {
+    if (title) {
+      uploadIdeas({ ...data, ...title });
     }
   };
 
@@ -136,7 +144,19 @@ const VideoItem: NextPage = () => {
               </form>
               {showUploadAlert && (
                 <div className="absolute -top-16 left-1/2 -translate-x-1/2 rounded-lg overflow-hidden">
-                  <Alert severity="success" color="warning">
+                  <Alert
+                    severity="success"
+                    color="warning"
+                    action={
+                      <Button
+                        color="inherit"
+                        size="small"
+                        onClick={() => router.push(`/archive/${title?.id}`)}
+                      >
+                        Check it out
+                      </Button>
+                    }
+                  >
                     Saved to your archive!
                   </Alert>
                 </div>

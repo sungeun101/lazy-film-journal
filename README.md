@@ -1,4 +1,4 @@
-Serverless (...?!) using NextJS, Tailwind, Prisma, PlanetScale and Cloudflare
+Serverless App using NextJS, Tailwind CSS, Prisma and PlanetScale
 
 ## getServerSideProps
 

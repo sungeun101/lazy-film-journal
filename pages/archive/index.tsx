@@ -24,11 +24,11 @@ const Archive: NextPage = () => {
       {isValidating ? (
         <Spinner />
       ) : watchedData?.watched && watchedData.watched.length === 0 ? (
-        <div className="flex justify-center p-4 text-gray-400">
+        <div className="flex justify-center pt-3 text-gray-400">
           Nothing saved yet!
         </div>
       ) : (
-        <main className="px-4 space-y-5">
+        <main className="px-4 lg:px-[10%] pt-3 grid md:grid-cols-2 gap-3">
           {watchedData?.watched.map(
             ({
               id,

@@ -100,8 +100,8 @@ export default function SearchedTitle({
           },
         }}
       >
-        <a className="cursor-pointer flex gap-2 border-2 rounded-lg overflow-hidden shadow-sm hover:shadow-md select-none ">
-          <li className="flex gap-2 overflow-hidden w-full">
+        <a className="cursor-pointer flex gap-2 border-2 rounded-lg overflow-hidden shadow-sm hover:shadow-md select-none h-full">
+          <li className="flex gap-2 overflow-hidden">
             {poster_path ? (
               <Image
                 src={`https://www.themoviedb.org/t/p/w94_and_h141_bestv2/${poster_path}`}
@@ -136,7 +136,7 @@ export default function SearchedTitle({
                 {router.pathname === "/archive" &&
                 ideasAllTogether &&
                 ideasAllTogether > 0 ? (
-                  <span className="select-none text-sm bg-gray-200 rounded-lg px-2 py-0">
+                  <span className="select-none text-sm bg-gray-200 rounded-lg px-2 py-0 absolute right-3">
                     {ideasAllTogether} idea{ideasAllTogether > 1 ? "s" : ""}
                   </span>
                 ) : (

@@ -89,12 +89,12 @@ export default function Layout({ title, canGoBack, children }: LayoutProps) {
             {title}
           </span>
         ) : null}
-        <nav className="text-gray-700 absolute right-4 flex gap-4 text-xs z-50 h-full">
+        <nav className="text-gray-700 absolute right-4 flex gap-4 text-xs z-50 h-full mt-1">
           <Link href={homePath}>
             <a
               className={cls(
                 "flex flex-col items-center justify-center space-y-0.5 md:flex-row md:gap-1",
-                router.pathname !== "/archive"
+                !router.pathname.includes("archive")
                   ? "text-orange-500 md:border-b-4 border-orange-300 h-full"
                   : "hover:text-gray-500 transition-colors"
               )}
@@ -120,7 +120,7 @@ export default function Layout({ title, canGoBack, children }: LayoutProps) {
             <a
               className={cls(
                 "flex flex-col items-center justify-center space-y-0.5 md:flex-row md:gap-1",
-                router.pathname === "/archive"
+                router.pathname.includes("archive")
                   ? "text-orange-500 md:border-b-4 border-orange-300 h-full"
                   : "hover:text-gray-500 transition-colors"
               )}

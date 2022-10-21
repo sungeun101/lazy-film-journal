@@ -103,10 +103,10 @@ const Board: NextPage = () => {
   return (
     <Layout canGoBack>
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="h-screen overflow-auto">
-          <nav className="flex justify-between items-center px-1">
+        <div className="h-screen mx-4">
+          <nav className="flex justify-between items-center py-2">
             {watchedData?.watched?.original_title && (
-              <h1 className="p-3 cursor-pointer">
+              <h1 className="cursor-pointer">
                 {watchedData.watched.original_title}
               </h1>
             )}
@@ -128,7 +128,8 @@ const Board: NextPage = () => {
               )}
             </button>
           </nav>
-          <main className="flex gap-2 mx-2 min-h-[100px]">
+
+          <main className="flex gap-2 min-h-[100px]">
             {lists.map((list: any, index: number) => (
               <DraggableList
                 key={index}

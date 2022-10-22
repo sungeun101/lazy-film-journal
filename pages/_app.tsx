@@ -17,7 +17,6 @@ function MyApp({ Component, pageProps }: AppProps) {
           }
         },
         revalidateOnFocus: false,
-        revalidateIfStale: false,
       }}
     >
       <RecoilRoot>

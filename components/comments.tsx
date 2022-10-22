@@ -116,7 +116,7 @@ export default function Comments({
       )}
     >
       <div className="w-8 h-8 rounded-full bg-slate-400" />
-      <div className="w-1/2 text-sm text-gray-700 p-2 border border-gray-300 rounded-md">
+      <div className="w-2/3 md:w-1/2 text-sm text-gray-700 p-2 border border-gray-300 rounded-md overflow-auto">
         <p>{message}</p>
       </div>
       <div>

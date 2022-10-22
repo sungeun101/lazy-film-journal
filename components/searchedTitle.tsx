@@ -41,8 +41,7 @@ export default function SearchedTitle({
   const [openModal, setOpenModal] = useState(false);
   const [ideasAllTogether, setIdeasAllTogether] = useState(0);
 
-  const [mutateHeart, { data: heartMutated }] =
-    useMutation<WatchedData>("/api/archive");
+  const [mutateHeart] = useMutation<WatchedData>("/api/archive");
 
   const { data: boardData } = useSWR(id ? `/api/archive/${id}/board` : null);
 
@@ -57,13 +56,8 @@ export default function SearchedTitle({
     }
   }, [boardData]);
 
-  useEffect(() => {
-    if (heartMutated?.ok) {
-      setIsLiked((prev) => !prev);
-    }
-  }, [heartMutated]);
-
   const toggleHeart = () => {
+    setIsLiked((prev) => !prev);
     mutateHeart({
       id,
       poster_path,
@@ -77,7 +71,6 @@ export default function SearchedTitle({
   const onClickModalYes = () => {
     setOpenModal(false);
     toggleHeart();
-    setIsLiked((prev) => !prev);
   };
 
   const onClickModalNo = () => {
@@ -151,7 +144,7 @@ export default function SearchedTitle({
         </a>
       </Link>
 
-      {router.pathname === "/archive" ? (
+      {isLiked ? (
         <>
           <button
             onClick={() => setOpenModal(true)}
@@ -159,7 +152,7 @@ export default function SearchedTitle({
               isLiked
                 ? "text-orange-500 hover:text-slate-300"
                 : "text-slate-300",
-              "rounded-full hover:text-orange-500 absolute right-2.5 top-2.5"
+              "rounded-full hover:text-orange-500 absolute right-2.5 top-1.5 p-1"
             )}
           >
             <svg
@@ -197,10 +190,10 @@ export default function SearchedTitle({
         </>
       ) : (
         <button
-          onClick={toggleHeart}
+          onClick={() => toggleHeart()}
           className={cls(
             isLiked ? "text-orange-500 hover:text-slate-300" : "text-slate-300",
-            "rounded-full hover:text-orange-500 absolute right-2.5 top-2.5"
+            "rounded-full hover:text-orange-500 absolute right-2.5 top-1.5 p-1"
           )}
         >
           <svg

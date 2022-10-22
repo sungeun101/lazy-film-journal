@@ -36,7 +36,7 @@ async function handler(
       to: process.env.MY_PHONE!,
       body: `Your login token is ${payload}`,
     });
-    console.log(message);
+    // console.log(message);
   } else if (email) {
     const mailOptions = {
       from: process.env.MAIL_ID,
@@ -52,7 +52,7 @@ async function handler(
       }
     });
     smtpTransport.close();
-    console.log(result);
+    // console.log(result);
   }
   return res.json({
     ok: true,

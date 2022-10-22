@@ -32,16 +32,15 @@ export default function Layout({ title, canGoBack, children }: LayoutProps) {
     }
   }, [asPath, pathname]);
 
-  useEffect(() => {
-    console.log("home Path", homePath);
-    console.log("archivePath", archivePath);
-  }, [homePath, archivePath]);
+  // useEffect(() => {
+  //   console.log("home Path", homePath);
+  //   console.log("archivePath", archivePath);
+  // }, [homePath, archivePath]);
 
   // const { data: ideaData, isValidating } = useSWR<IdeaResponse>("/api/ideas");
 
   const onClickGoBack = () => {
-    console.log("router", router);
-
+    // console.log("router", router);
     if (pathname === "/archive/[id]") {
       router.push("/archive");
     } else if (pathname.includes("reviews")) {

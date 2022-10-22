@@ -33,10 +33,9 @@ const VideoItem: NextPage = () => {
   } = router;
 
   const { data: video } = useSWR(
-    // id
-    //   ? `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id=${id}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
-    //   :
-    null
+    id
+      ? `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id=${id}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+      : null
   );
   const { data: comments } = useSWR(
     id
@@ -61,7 +60,7 @@ const VideoItem: NextPage = () => {
       mutate("/api/ideas");
       const timer = setTimeout(() => {
         setShowUploadAlert(false);
-      }, 3000);
+      }, 5000);
       return () => clearTimeout(timer);
     }
   }, [ideaResult, mutate, reset]);
@@ -82,16 +81,16 @@ const VideoItem: NextPage = () => {
 
   return (
     <Layout canGoBack>
-      <div className="space-y-4 max-w-7xl mx-auto ">
+      <div className="space-y-4 max-w-7xl mx-auto">
         {video ? (
-          <iframe
-            // width={video.snippet?.thumbnails?.default?.high?.width}
-            // height={video.snippet?.thumbnails?.default?.high?.height}
-            width="100%"
-            height="300px"
-            src={`http://www.youtube.com/embed/${id}`}
-            allowFullScreen={true}
-          ></iframe>
+          <div className="aspect-video">
+            <iframe
+              width="100%"
+              height="100%"
+              src={`http://www.youtube.com/embed/${id}`}
+              allowFullScreen={true}
+            ></iframe>
+          </div>
         ) : (
           <div className="w-full shadow-sm bg-slate-300 aspect-video" />
         )}

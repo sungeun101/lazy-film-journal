@@ -1,5 +1,4 @@
 import SearchedTitle from "@components/searchedTitle";
-import Spinner from "@components/spinner";
 import useMutation from "@libs/client/useMutation";
 import { handleFetch } from "@libs/client/utils";
 import { Watched } from "@prisma/client";
@@ -9,10 +8,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
-import FloatingButton from "@components/floating-button";
+// import FloatingButton from "@components/floating-button";
 import Layout from "@components/layout";
 import { useRecoilState } from "recoil";
 import { showSearchResultState } from "@libs/client/states";
+import { Skeleton } from "@mui/material";
 
 export interface VideoInfo {
   snippet: any;
@@ -342,7 +342,21 @@ const Explore: NextPage = () => {
             //   </>
             // )
             watch("searchWord")?.length > 0
-            ? "loading"
+            ? [...Array(8)].map((_, i) => (
+                <li
+                  className="flex w-full border-2 rounded-lg overflow-hidden shadow-sm select-none h-full"
+                  key={i}
+                >
+                  <Skeleton variant="rectangular" width={105} height="100%" />
+                  <div className="w-full m-2">
+                    <Skeleton width="40%" height={35} />
+                    <Skeleton width="30%" height={20} />
+                    <Skeleton width="90%" height={20} />
+                    <Skeleton width="95%" height={20} />
+                    <Skeleton width="70%" height={20} />
+                  </div>
+                </li>
+              ))
             : mockTitles.map(
                 ({
                   id,

@@ -1,6 +1,7 @@
 import Layout from "@components/layout";
 import SearchedTitle from "@components/searchedTitle";
 import Spinner from "@components/spinner";
+import { Skeleton } from "@mui/material";
 import { Watched } from "@prisma/client";
 import type { NextPage } from "next";
 import useSWR from "swr";
@@ -22,7 +23,23 @@ const Archive: NextPage = () => {
   return (
     <Layout title="Archive">
       {isValidating ? (
-        <Spinner />
+        <main className="px-4 lg:px-[10%] pt-3 grid md:grid-cols-2 gap-3">
+          {[...Array(8)].map((_, i) => (
+            <li
+              className="flex w-full border-2 rounded-lg overflow-hidden shadow-sm select-none h-full"
+              key={i}
+            >
+              <Skeleton variant="rectangular" width={105} height="100%" />
+              <div className="w-full m-2">
+                <Skeleton width="40%" height={35} />
+                <Skeleton width="30%" height={20} />
+                <Skeleton width="90%" height={20} />
+                <Skeleton width="95%" height={20} />
+                <Skeleton width="70%" height={20} />
+              </div>
+            </li>
+          ))}
+        </main>
       ) : watchedData?.watched && watchedData.watched.length === 0 ? (
         <div className="flex justify-center pt-3 text-gray-400">
           Nothing saved yet!

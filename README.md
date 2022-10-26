@@ -9,7 +9,13 @@ This is a perfect tool for anyone who:
 - needs a bit of inspiration to start writing your thoughts
 
 ## Built With
-Typescript, React, NextJS, Tailwind CSS, Prisma and PlanetScale
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![Next.js](https://img.shields.io/badge/NEXT-000000?style=for-the-badge&logo=Next.js&logoColor=white)
+<img src="https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=Prisma&logoColor=white"/>
+<img src="https://img.shields.io/badge/PlanetScale-000000?style=for-the-badge&logo=PlanetScale&logoColor=white"/>
+<img src="https://img.shields.io/badge/TAILWINDCSS-06B6D4?style=for-the-badge&logo=Tailwind CSS&logoColor=white"/>
+![Material UI](https://img.shields.io/badge/-MUI-007FFF?style=for-the-badge&logo=MUI&logoColor=white)
 
 ## Features
 ### 0. Get an authentification email or text message to login

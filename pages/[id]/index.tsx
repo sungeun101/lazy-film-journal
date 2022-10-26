@@ -1,16 +1,12 @@
-import SearchedTitle from "@components/searchedTitle";
-import Spinner from "@components/spinner";
-import useMutation from "@libs/client/useMutation";
-import { handleFetch } from "@libs/client/utils";
 import { Watched } from "@prisma/client";
 import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect } from "react";
 import useSWR from "swr";
 import Layout from "@components/layout";
+import { Skeleton } from "@mui/material";
 
 export interface VideoInfo {
   snippet: any;
@@ -30,7 +26,7 @@ interface MutationResult {
   watched: Watched[];
 }
 
-const maxResults = 5;
+const maxResults = 10;
 
 const VideosFromSearchedTitle: NextPage = () => {
   // const [isReviewVideo, setIsReviewVideo] = useState(false);
@@ -98,32 +94,41 @@ const VideosFromSearchedTitle: NextPage = () => {
       </form> */}
 
       <main className="md:px-10 lg:px-30 xl:px-20 grid md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 place-items-center">
-        {videos && videos.items ? (
-          videos.items.map(({ snippet, id: { videoId } }: VideoInfo) => (
-            <Link key={videoId} href={`/${videoId}/reviews`}>
-              {snippet.thumbnails?.high?.url && (
-                <a className="flex flex-col w-[400px] md:w-[320px] h-full mt-4">
-                  <Image
-                    src={snippet.thumbnails.high.url}
-                    width={snippet.thumbnails.high.width}
-                    height={snippet.thumbnails.high.height}
-                    alt="thumbnail"
-                  />
-                  <h1 className="text-xl mt-2 font-bold text-gray-900">
-                    {snippet.title.replace(
-                      /&#(\d+);/g,
-                      function (match: string, dec: number) {
-                        return String.fromCharCode(dec);
-                      }
-                    )}
-                  </h1>
-                </a>
-              )}
-            </Link>
-          ))
-        ) : (
-          <Spinner />
-        )}
+        {videos && videos.items
+          ? videos.items.map(({ snippet, id: { videoId } }: VideoInfo) => (
+              <Link key={videoId} href={`/${videoId}/reviews`}>
+                {snippet.thumbnails?.high?.url && (
+                  <a className="flex flex-col w-[400px] md:w-[320px] h-full mt-4">
+                    <Image
+                      src={snippet.thumbnails.high.url}
+                      width={snippet.thumbnails.high.width}
+                      height={snippet.thumbnails.high.height}
+                      alt="thumbnail"
+                    />
+                    <h1 className="text-lg mt-2 font-bold text-gray-900">
+                      {snippet.title.replace(
+                        /&#(\d+);/g,
+                        function (match: string, dec: number) {
+                          return String.fromCharCode(dec);
+                        }
+                      )}
+                    </h1>
+                  </a>
+                )}
+              </Link>
+            ))
+          : [...Array(10)].map((_, i) => (
+              <li
+                className="shadow-sm flex flex-col w-[400px] md:w-[320px] h-[19rem] mb-4 mt-2"
+                key={i}
+              >
+                <Skeleton variant="rectangular" width="100%" height="100%" />
+                <div className="w-full m-1">
+                  <Skeleton width="90%" height={26} />
+                  <Skeleton width="35%" height={26} />
+                </div>
+              </li>
+            ))}
       </main>
     </Layout>
   );

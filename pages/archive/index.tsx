@@ -1,6 +1,5 @@
 import Layout from "@components/layout";
 import SearchedTitle from "@components/searchedTitle";
-import Spinner from "@components/spinner";
 import { Skeleton } from "@mui/material";
 import { Watched } from "@prisma/client";
 import type { NextPage } from "next";

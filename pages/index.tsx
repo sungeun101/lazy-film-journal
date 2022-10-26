@@ -261,7 +261,7 @@ const Explore: NextPage = () => {
                     release_date={release_date || first_air_date || ""}
                     overview={overview}
                     isLikedBefore={
-                      watched
+                      watched?.watched && watched.watched.length > 0
                         ? watched.watched.some(
                             (item: TitleInfo) => item.id === id
                           )
@@ -375,7 +375,7 @@ const Explore: NextPage = () => {
                     release_date={release_date || first_air_date || ""}
                     overview={overview}
                     isLikedBefore={
-                      watched
+                      watched?.watched && watched.watched.length > 0
                         ? watched.watched.some(
                             (item: TitleInfo) => item.id === id
                           )

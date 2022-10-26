@@ -63,9 +63,9 @@ const Enter: NextPage = () => {
 
   return (
     <div className="mt-16 px-4">
-      <h3 className="text-3xl font-bold text-center">
-        Welcome to the Next-Market
-      </h3>
+      <h1 className="text-3xl font-bold text-center">
+        Welcome to Lazy Film Journal
+      </h1>
       <div className="mt-12">
         {data?.ok ? (
           <form
@@ -84,9 +84,9 @@ const Enter: NextPage = () => {
         ) : (
           <>
             <div className="flex flex-col items-center">
-              <h5 className="text-sm text-gray-500 font-medium">
+              {/* <h5 className="text-sm text-gray-500 font-medium">
                 Enter using:
-              </h5>
+              </h5> */}
               <div className="grid  border-b  w-full mt-8 grid-cols-2 ">
                 <button
                   className={cls(
@@ -147,7 +147,7 @@ const Enter: NextPage = () => {
           </>
         )}
 
-        <div className="mt-8">
+        {/* <div className="mt-8">
           <div className="relative">
             <div className="absolute w-full border-t border-gray-300" />
             <div className="relative -top-3 text-center ">
@@ -182,7 +182,7 @@ const Enter: NextPage = () => {
               </svg>
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

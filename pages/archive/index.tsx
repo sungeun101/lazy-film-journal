@@ -3,6 +3,8 @@ import SearchedTitle from "@components/searchedTitle";
 import { Skeleton } from "@mui/material";
 import { Watched } from "@prisma/client";
 import type { NextPage } from "next";
+import Router, { useRouter } from "next/router";
+import { useEffect } from "react";
 import useSWR from "swr";
 
 interface WatchedWithIdeasCount extends Watched {
@@ -12,12 +14,21 @@ interface WatchedWithIdeasCount extends Watched {
 }
 export interface WatchedData {
   ok: boolean;
-  watched: WatchedWithIdeasCount[];
+  watched?: WatchedWithIdeasCount[];
+  error?: string;
 }
 
 const Archive: NextPage = () => {
   const { data: watchedData, isValidating } =
     useSWR<WatchedData>("/api/archive");
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (watchedData?.error) {
+      router.replace("/enter");
+    }
+  }, [watchedData, router]);
 
   return (
     <Layout title="Archive">
@@ -45,7 +56,7 @@ const Archive: NextPage = () => {
         </div>
       ) : (
         <main className="px-4 lg:px-[10%] pt-3 grid md:grid-cols-2 gap-3">
-          {watchedData?.watched.map(
+          {watchedData?.watched?.map(
             ({
               id,
               poster_path,
@@ -61,7 +72,7 @@ const Archive: NextPage = () => {
                 original_title={original_title || ""}
                 release_date={release_date || ""}
                 overview={overview}
-                isLikedBefore={watchedData.watched.some(
+                isLikedBefore={watchedData?.watched?.some(
                   (item) => item.id === id
                 )}
                 isMovie={Boolean(release_date)}

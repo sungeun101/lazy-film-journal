@@ -61,7 +61,7 @@ export default function Layout({ title, canGoBack, children }: LayoutProps) {
     <section className="w-full">
       <div
         className="z-10 
-          bg-white w-full h-12 text-lg px-10 font-medium fixed text-gray-800 top-0 flex items-center"
+          bg-white w-full h-12 text-lg px-10 font-medium fixed text-gray-800 top-0 flex items-center shadow-sm"
       >
         {canGoBack ? (
           <button onClick={onClickGoBack} className="absolute left-4">

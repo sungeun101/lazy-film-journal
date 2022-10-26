@@ -11,9 +11,9 @@ function MyApp({ Component, pageProps }: AppProps) {
     <SWRConfig
       value={{
         fetcher: (url: string) => fetch(url).then((res) => res.json()),
-        onError(error) {
+        onError: (error, key) => {
           if (error) {
-            router.push("/enter");
+            router.replace("/enter");
           }
         },
         revalidateOnFocus: false,

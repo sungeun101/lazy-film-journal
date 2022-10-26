@@ -41,7 +41,7 @@ async function handler(
     const mailOptions = {
       from: process.env.MAIL_ID,
       to: email,
-      subject: "Film Journal Authentication Email",
+      subject: "Lazy Film Journal Authentication Email",
       html: `<div>Authentication Code : <strong>${payload}</strong></div>`,
     };
     const result = smtpTransport.sendMail(mailOptions, (error, responses) => {

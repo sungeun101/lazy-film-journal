@@ -8,7 +8,7 @@ This would be a perfect tool for anyone who:
 - is too lazy to write a single sentence
 - needs a bit of inspiration to start writing your thoughts
 
-## Built With
+## Built With(_yes, this is SERVERLESS!_)
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 ![Next.js](https://img.shields.io/badge/NEXT-000000?style=for-the-badge&logo=Next.js&logoColor=white)

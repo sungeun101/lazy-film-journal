@@ -26,7 +26,7 @@ _(yes, this is SERVERLESS!)_
 ### 2) Search for the film you watched and save it to your archive
 <img width="400" src="https://user-images.githubusercontent.com/61957322/197964908-744d51a5-e5e6-4b22-839b-99514443fff0.gif"/>
 
-### 3) Or steal other's idea and bookmark
+### 3) Steal other's idea and bookmark
 <img width="400" src="https://user-images.githubusercontent.com/61957322/197965298-c214d846-2648-46d3-a54d-08b614b4eb94.gif"/>
 
 ### 4) Try writing down your own thoughts(create, edit and delete!)

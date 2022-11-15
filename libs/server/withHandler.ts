@@ -1,6 +1,4 @@
-import { NextApiResponse } from "next";
-import { NextApiRequest } from "next";
-
+import { NextApiRequest, NextApiResponse } from "next";
 export interface ResponseType {
   ok: boolean;
   [key: string]: any;

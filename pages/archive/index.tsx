@@ -24,15 +24,15 @@ const Archive: NextPage = () => {
 
   const router = useRouter();
 
-  useEffect(() => {
-    if (watchedData?.error) {
-      router.replace("/enter");
-    }
-  }, [watchedData, router]);
+  // useEffect(() => {
+  //   if (watchedData?.error) {
+  //     router.replace("/enter");
+  //   }
+  // }, [watchedData, router]);
 
   return (
     <Layout title="Archive">
-      {isValidating ? (
+      {isValidating || !watchedData || !watchedData.watched ? (
         <main className="px-4 lg:px-[10%] pt-3 grid md:grid-cols-2 gap-3">
           {[...Array(8)].map((_, i) => (
             <li
@@ -50,13 +50,13 @@ const Archive: NextPage = () => {
             </li>
           ))}
         </main>
-      ) : watchedData?.watched && watchedData.watched.length === 0 ? (
+      ) : watchedData.watched && watchedData.watched.length === 0 ? (
         <div className="flex justify-center pt-3 text-gray-400">
           Nothing saved yet!
         </div>
       ) : (
         <main className="px-4 lg:px-[10%] pt-3 grid md:grid-cols-2 gap-3">
-          {watchedData?.watched?.map(
+          {watchedData.watched.map(
             ({
               id,
               poster_path,
@@ -72,7 +72,7 @@ const Archive: NextPage = () => {
                 original_title={original_title || ""}
                 release_date={release_date || ""}
                 overview={overview}
-                isLikedBefore={watchedData?.watched?.some(
+                isLikedBefore={watchedData.watched!.some(
                   (item) => item.id === id
                 )}
                 isMovie={Boolean(release_date)}

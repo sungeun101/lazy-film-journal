@@ -5,6 +5,10 @@ module.exports = {
     "./components/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
+    fontFamily: {
+      sans: ["Montserrat"],
+      serif: ["Montserrat"],
+    },
     extend: {
       animation: {
         "bounce-once": "bounce 1s 2",

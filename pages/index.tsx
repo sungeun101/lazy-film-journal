@@ -11,7 +11,6 @@ import useSWR from "swr";
 // import FloatingButton from "@components/floating-button";
 import Layout from "@components/layout";
 import { useRecoilState } from "recoil";
-import { showSearchResultState } from "@libs/client/states";
 import { Skeleton } from "@mui/material";
 
 export interface VideoInfo {
@@ -154,9 +153,6 @@ const mockTitles = [
 
 const Explore: NextPage = () => {
   const [isReviewVideo, setIsReviewVideo] = useState(false);
-  const [showSearchResult, setShowSearchResult] = useRecoilState(
-    showSearchResultState
-  );
 
   const {
     register: searchRegister,

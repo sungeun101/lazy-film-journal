@@ -2,12 +2,12 @@
 
 ## Motivation
 
-I am working on this project to track all I watch and keep a film journal _with minimal effort_.
+I am working on this project to track all I watch and keep a film journal in English _with minimal effort_.
 This would be a perfect tool for anyone who:
 
+- is too lazy to keep a film journal on a regular basis
+- is too lazy to write a single sentence in English
 - wants to pick up English expressions by reading comments and watching videos on Youtube
-- is too lazy to keep a film journal
-- is too lazy to write a single sentence
 - needs a bit of inspiration to start writing your thoughts
 
 ## Built With

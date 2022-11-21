@@ -21,6 +21,7 @@ _(yes, this is SERVERLESS!)_
 <img src="https://img.shields.io/badge/PlanetScale-000000?style=for-the-badge&logo=PlanetScale&logoColor=white"/>
 <img src="https://img.shields.io/badge/TAILWINDCSS-06B6D4?style=for-the-badge&logo=Tailwind CSS&logoColor=white"/>
 ![Material UI](https://img.shields.io/badge/-MUI-007FFF?style=for-the-badge&logo=MUI&logoColor=white)
+![Twilio](https://img.shields.io/badge/-Twilio-F22F46?style=for-the-badge&logo=Twilio&logoColor=white)
 
 ## Features
 

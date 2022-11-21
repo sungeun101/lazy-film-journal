@@ -2,12 +2,12 @@
 
 ## Motivation
 
-I am working on this project to track all I watch and keep a film journal _with minimal effort_.
+I am working on this project to track all I watch and keep a film journal in English _with minimal effort_.
 This would be a perfect tool for anyone who:
 
+- is too lazy to keep a film journal on a regular basis
+- is too lazy to write a single sentence in English
 - wants to pick up English expressions by reading comments and watching videos on Youtube
-- is too lazy to keep a film journal
-- is too lazy to write a single sentence
 - needs a bit of inspiration to start writing your thoughts
 
 ## Built With
@@ -21,6 +21,7 @@ _(yes, this is SERVERLESS!)_
 <img src="https://img.shields.io/badge/PlanetScale-000000?style=for-the-badge&logo=PlanetScale&logoColor=white"/>
 <img src="https://img.shields.io/badge/TAILWINDCSS-06B6D4?style=for-the-badge&logo=Tailwind CSS&logoColor=white"/>
 ![Material UI](https://img.shields.io/badge/-MUI-007FFF?style=for-the-badge&logo=MUI&logoColor=white)
+![Twilio](https://img.shields.io/badge/-Twilio-F22F46?style=for-the-badge&logo=Twilio&logoColor=white)
 
 ## Features
 

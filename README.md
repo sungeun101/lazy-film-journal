@@ -49,4 +49,5 @@ _(yes, this is SERVERLESS!)_
 - [x] Iron-session
 - [x] Redirections with middleware to handle useUser hook & errors
 - [x] Pre-downloaded font in build time from Next.js(Custom Document - https://nextjs.org/docs/advanced-features/custom-document)
+- [ ] Serverside rendering with SWR
 - [ ] Lazy loading(or Dynamic import)

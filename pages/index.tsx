@@ -7,11 +7,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import useSWR from "swr";
+import useSWR, { SWRConfig } from "swr";
 // import FloatingButton from "@components/floating-button";
 import Layout from "@components/layout";
 import { useRecoilState } from "recoil";
 import { Skeleton } from "@mui/material";
+import axios from "axios";
 
 export interface VideoInfo {
   snippet: any;
@@ -353,38 +354,75 @@ const Explore: NextPage = () => {
                   </div>
                 </li>
               ))
-            : mockTitles.map(
-                ({
-                  id,
-                  poster_path,
-                  original_name,
-                  original_title,
-                  first_air_date,
-                  release_date,
-                  overview,
-                }: TitleInfo) => (
-                  <SearchedTitle
-                    key={id}
-                    id={id}
-                    poster_path={poster_path}
-                    original_title={original_title || original_name || ""}
-                    release_date={release_date || first_air_date || ""}
-                    overview={overview}
-                    isLikedBefore={
-                      watched?.watched && watched.watched.length > 0
-                        ? watched.watched.some(
-                            (item: TitleInfo) => item.id === id
-                          )
-                        : false
-                    }
-                    isMovie={Boolean(release_date)}
-                  />
-                )
-              )}
+            : // : mockTitles.map(
+              //     ({
+              //       id,
+              //       poster_path,
+              //       original_name,
+              //       original_title,
+              //       first_air_date,
+              //       release_date,
+              //       overview,
+              //     }: TitleInfo) => (
+              //       <SearchedTitle
+              //         key={id}
+              //         id={id}
+              //         poster_path={poster_path}
+              //         original_title={original_title || original_name || ""}
+              //         release_date={release_date || first_air_date || ""}
+              //         overview={overview}
+              //         isLikedBefore={
+              //           watched?.watched && watched.watched.length > 0
+              //             ? watched.watched.some(
+              //                 (item: TitleInfo) => item.id === id
+              //               )
+              //             : false
+              //         }
+              //         isMovie={Boolean(release_date)}
+              //       />
+              //     )
+              //   )
+              null}
         </main>
       )}
     </Layout>
   );
 };
+
+// const Page: NextPage = ()=>{
+//   return(
+//     <SWRConfig
+//     value={{
+//       fallback:{
+//         `https://api.themoviedb.org/3/search/movie?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=avatar&page=1&include_adult=false&language=en`:{
+//           tmdb.results
+//         }
+//       }
+//     }}
+//     >
+//       <Explore/>
+//     </SWRConfig>
+//   )
+// }
+
+export async function getStaticProps() {
+  const res = await axios.get(
+    `https://api.themoviedb.org/3/search/movie?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=avatar&page=1&include_adult=false&language=en`
+  );
+  console.log(res.data);
+  const data = res.data;
+  // return {
+  //   props: {
+  //     data,
+  //   },
+  // };
+  return {
+    props: {
+      fallback: {
+        "/": data,
+      },
+    },
+  };
+}
 
 export default Explore;

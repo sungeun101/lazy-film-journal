@@ -106,7 +106,7 @@ const Board: NextPage = () => {
         <div className="h-screen mx-4">
           <nav className="flex justify-between items-center py-2">
             {watchedData?.watched?.original_title && (
-              <h1 className="cursor-pointer">
+              <h1 className="select-none">
                 {watchedData.watched.original_title}
               </h1>
             )}

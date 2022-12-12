@@ -34,13 +34,13 @@ const Board: NextPage = () => {
     `/api/archive/${id}/board`
   );
 
-  // useEffect(() => {
-  //   if (lists) {
-  //     console.log("lists", lists);
-  //     console.log("boardData", boardData);
-  //     console.log("watchedData", watchedData);
-  //   }
-  // }, [lists]);
+  useEffect(() => {
+    if (lists) {
+      console.log("lists", lists);
+      console.log("boardData", boardData);
+      console.log("watchedData", watchedData);
+    }
+  }, [lists]);
 
   // useEffect(() => {
   //   if (postResult) {
@@ -112,6 +112,7 @@ const Board: NextPage = () => {
             )}
 
             <button
+              disabled={Boolean(lists.length === 0)}
               onClick={onClickSave}
               className="bg-orange-500 hover:bg-orange-600 text-white border border-transparent rounded-md shadow-sm font-medium focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:outline-none text-sm px-2 h-8 w-14 flex justify-center items-center"
             >

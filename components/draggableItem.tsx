@@ -7,15 +7,12 @@ import {
   DialogContentText,
   Button as MuiButton,
 } from "@mui/material";
-import Input from "@components/input";
-import Button from "@components/button";
 import { useForm } from "react-hook-form";
+import { Iidea } from "./draggableList";
+import Label from "./Label";
 
 interface DraggableItemProps {
-  idea: {
-    id: string;
-    content: string;
-  };
+  idea: Iidea;
   index: number;
   setLists: React.Dispatch<any>;
   listIndex: number;
@@ -201,6 +198,12 @@ function DraggableItem({
                   </MuiButton>
                 </DialogActions>
               </Dialog>
+
+              {idea.mine && (
+                <Label color={"success"} sx={{ mr: 0.5 }}>
+                  You
+                </Label>
+              )}
               {idea.content}
             </>
           )}

@@ -18,6 +18,11 @@ interface DraggableListProps {
 interface IForm {
   text: string;
 }
+export interface Iidea {
+  id: string;
+  content: string;
+  mine?: boolean;
+}
 
 function DraggableList({
   list,
@@ -32,6 +37,7 @@ function DraggableList({
     const newIdea = {
       id: Date.now().toString(),
       content: text,
+      mine: true,
     };
     setLists((prev: any) => {
       const result = {
@@ -104,7 +110,7 @@ function DraggableList({
             className="flex flex-col gap-3 pb-3"
           >
             {list &&
-              list.map((idea: { id: string; content: string }, index: any) => (
+              list.map((idea: Iidea, index: any) => (
                 <DraggableItem
                   key={idea.id}
                   idea={idea}

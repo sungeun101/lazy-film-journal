@@ -32,9 +32,7 @@ function DraggableItem({
 
   const {
     handleSubmit: handleSubmitEdit,
-    reset,
     watch,
-    control,
     register,
   } = useForm({
     defaultValues: { updatedIdea: idea.content },
@@ -93,7 +91,7 @@ function DraggableItem({
                 <textarea
                   {...register("updatedIdea")}
                   required={true}
-                  className="appearance-none w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500  min-h-[130px]"
+                  className="appearance-none px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-orange-500 focus:border-orange-500  min-h-[130px] min-w-[300px]"
                   onBlur={onEditValid}
                 />
               </form>
@@ -144,6 +142,7 @@ function DraggableItem({
             </>
           ) : (
             <>
+              {/* Edit Button */}
               <button
                 type="button"
                 onClick={() => setEditOn(true)}
@@ -164,6 +163,7 @@ function DraggableItem({
                   />
                 </svg>
               </button>
+              {/* Delete Button */}
               <button
                 type="button"
                 onClick={() => setOpenModal(true)}

@@ -57,7 +57,7 @@ function DraggableList({
   };
 
   return (
-    <section className="px-2 pb-4 bg-gray-100 min-w-[175px]">
+    <section className="px-2 pb-4 bg-gray-100 min-w-[175px] max-w-[30rem]">
       <button
         type="button"
         onClick={() => setOpenModal(true)}

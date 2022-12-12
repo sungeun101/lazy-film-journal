@@ -1,18 +1,13 @@
 import SearchedTitle from "@components/searchedTitle";
-import useMutation from "@libs/client/useMutation";
-import { handleFetch } from "@libs/client/utils";
 import { Watched } from "@prisma/client";
 import type { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import useSWR, { SWRConfig } from "swr";
+import useSWR from "swr";
 // import FloatingButton from "@components/floating-button";
 import Layout from "@components/layout";
-import { useRecoilState } from "recoil";
 import { Skeleton } from "@mui/material";
-import axios from "axios";
 
 export interface VideoInfo {
   snippet: any;
@@ -153,14 +148,13 @@ const mockTitles = [
 ];
 
 const Explore: NextPage = () => {
-  const [isReviewVideo, setIsReviewVideo] = useState(false);
+  // const [isReviewVideo, setIsReviewVideo] = useState(false);
 
   const {
     register: searchRegister,
-    handleSubmit: handleSearchSubmit,
+    // handleSubmit: handleSearchSubmit,
     getValues,
     watch,
-    formState: { isDirty },
   } = useForm();
   const { movieOrSeries } = getValues();
 
@@ -170,12 +164,12 @@ const Explore: NextPage = () => {
     //   :
     null
   );
-  const { data: written } = useSWR(
-    // !isReviewVideo
-    //   ? `https://imdb-api.com/en/API/Reviews/${process.env.NEXT_PUBLIC_IMDB_API_KEY}/tt5113044`
-    //   :
-    null
-  );
+  // const { data: written } = useSWR(
+  // !isReviewVideo
+  //   ? `https://imdb-api.com/en/API/Reviews/${process.env.NEXT_PUBLIC_IMDB_API_KEY}/tt5113044`
+  //   :
+  // null
+  // );
   // console.log("written", written);
   const { data: watched } = useSWR("/api/archive");
 
@@ -189,7 +183,7 @@ const Explore: NextPage = () => {
       : null
   );
 
-  const onSearchValid = (userInput: any) => {};
+  // const onSearchValid = (userInput: any) => {};
 
   // const changeReviewType = () => {
   //   setIsReviewVideo((prev) => !prev);
@@ -199,7 +193,7 @@ const Explore: NextPage = () => {
     <Layout>
       {/* searchbar */}
       <form
-        onSubmit={handleSearchSubmit(onSearchValid)}
+        // onSubmit={handleSearchSubmit(onSearchValid)}
         className="mt-1 fixed top-1 left-4 lg:left-1/2 lg:-translate-x-1/2 w-full max-w-xs sm:max-w-md flex z-10"
       >
         <input
@@ -354,75 +348,38 @@ const Explore: NextPage = () => {
                   </div>
                 </li>
               ))
-            : // : mockTitles.map(
-              //     ({
-              //       id,
-              //       poster_path,
-              //       original_name,
-              //       original_title,
-              //       first_air_date,
-              //       release_date,
-              //       overview,
-              //     }: TitleInfo) => (
-              //       <SearchedTitle
-              //         key={id}
-              //         id={id}
-              //         poster_path={poster_path}
-              //         original_title={original_title || original_name || ""}
-              //         release_date={release_date || first_air_date || ""}
-              //         overview={overview}
-              //         isLikedBefore={
-              //           watched?.watched && watched.watched.length > 0
-              //             ? watched.watched.some(
-              //                 (item: TitleInfo) => item.id === id
-              //               )
-              //             : false
-              //         }
-              //         isMovie={Boolean(release_date)}
-              //       />
-              //     )
-              //   )
-              null}
+            : mockTitles.map(
+                ({
+                  id,
+                  poster_path,
+                  original_name,
+                  original_title,
+                  first_air_date,
+                  release_date,
+                  overview,
+                }: TitleInfo) => (
+                  <SearchedTitle
+                    key={id}
+                    id={id}
+                    poster_path={poster_path}
+                    original_title={original_title || original_name || ""}
+                    release_date={release_date || first_air_date || ""}
+                    overview={overview}
+                    isLikedBefore={
+                      watched?.watched && watched.watched.length > 0
+                        ? watched.watched.some(
+                            (item: TitleInfo) => item.id === id
+                          )
+                        : false
+                    }
+                    isMovie={Boolean(release_date)}
+                  />
+                )
+              )}
         </main>
       )}
     </Layout>
   );
 };
-
-// const Page: NextPage = ()=>{
-//   return(
-//     <SWRConfig
-//     value={{
-//       fallback:{
-//         `https://api.themoviedb.org/3/search/movie?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=avatar&page=1&include_adult=false&language=en`:{
-//           tmdb.results
-//         }
-//       }
-//     }}
-//     >
-//       <Explore/>
-//     </SWRConfig>
-//   )
-// }
-
-export async function getStaticProps() {
-  const res = await axios.get(
-    `https://api.themoviedb.org/3/search/movie?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}&query=avatar&page=1&include_adult=false&language=en`
-  );
-  console.log(res.data);
-  const data = res.data;
-  // return {
-  //   props: {
-  //     data,
-  //   },
-  // };
-  return {
-    props: {
-      fallback: {
-        "/": data,
-      },
-    },
-  };
-}
 
 export default Explore;
